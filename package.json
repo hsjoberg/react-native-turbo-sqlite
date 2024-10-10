@@ -15,6 +15,10 @@
         "types": "./lib/typescript/commonjs/src/NativeTurboSqlite.d.ts",
         "default": "./lib/commonjs/NativeTurboSqlite.js"
       }
+    },
+    "./package.json": {
+      "require": "./package.json",
+      "import": "./package.json"
     }
   },
   "files": [
