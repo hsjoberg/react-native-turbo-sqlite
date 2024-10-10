@@ -1,16 +1,14 @@
 import React from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 
-import NativeTurboSqlite from "../../src/NativeTurboSqlite";
+import TurboSqlite from "../../src/index";
 
 import { DocumentDirectoryPath } from "@dr.pogodin/react-native-fs";
 
 const testSqliteTurboModule = async () => {
   try {
     // Open the database
-    const db = NativeTurboSqlite.openDatabase(
-      DocumentDirectoryPath + "/test.db"
-    );
+    const db = TurboSqlite.openDatabase(DocumentDirectoryPath + "/test.db");
     console.log("Database opened successfully");
 
     // Create a table
@@ -78,7 +76,7 @@ export default function App(): React.FunctionComponentElement<{}> {
   return (
     <View style={styles.container}>
       <Text>Hej</Text>
-      <Text>{NativeTurboSqlite.getVersionString()}</Text>
+      <Text>{TurboSqlite.getVersionString()}</Text>
       <Button title="test" onPress={testSqliteTurboModule} />
     </View>
   );

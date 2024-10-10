@@ -49,8 +49,6 @@ jsi::Value DatabaseHostObject::get(jsi::Runtime& runtime, const jsi::PropNameID&
         }
 
         std::vector<jsi::Object> rows;
-        int rowsAffected = 0;
-        int64_t insertId = 0;
 
         while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
           jsi::Object row(runtime);
@@ -81,8 +79,8 @@ jsi::Value DatabaseHostObject::get(jsi::Runtime& runtime, const jsi::PropNameID&
           throw jsi::JSError(runtime, "Error executing SQL: " + std::string(sqlite3_errmsg(db)));
         }
 
-        rowsAffected = sqlite3_changes(db);
-        insertId = sqlite3_last_insert_rowid(db);
+        int rowsAffected = sqlite3_changes(db);
+        int64_t insertId = sqlite3_last_insert_rowid(db);
 
         sqlite3_finalize(stmt);
 
