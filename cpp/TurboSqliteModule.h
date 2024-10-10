@@ -8,14 +8,9 @@
 #include "RNTurboSqliteSpecJSI.h"
 #endif
 
-#include <memory>
 #include <string>
 
-#include <react/bridging/Promise.h>
-
 #include "sqlite3.h"
-
-// using SqlResult = facebook::react::TurboSqliteCxxSqlResultBridging<facebook::react::TurboSqliteCxxSqlResult<jsi::Array, double, double>>;
 
 namespace facebook::react {
 
@@ -25,7 +20,7 @@ class TurboSqliteModule : public NativeTurboSqliteCxxSpec<TurboSqliteModule> {
 
   std::string getVersionString(facebook::jsi::Runtime& runtime);
 
-  bool openDatabase(jsi::Runtime& runtime, std::string name);
+  jsi::Object openDatabase(jsi::Runtime& runtime, std::string name);
 
   // TODO use return-type `TurboSqliteCxxSqlResult` or `TurboSqliteCxxSqlResultBridging` instead
   jsi::Object executeSql(jsi::Runtime& runtime, std::string sql, jsi::Array params);
