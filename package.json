@@ -1,19 +1,19 @@
 {
   "name": "react-native-turbo-sqlite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pure C++ TurboModule for sqlite3",
-  "source": "./src/index.tsx",
-  "main": "./lib/commonjs/index.js",
-  "module": "./lib/module/index.js",
+  "source": "./src/NativeTurboSqlite.tsx",
+  "main": "./lib/commonjs/NativeTurboSqlite.js",
+  "module": "./lib/module/NativeTurboSqlite.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/typescript/module/src/index.d.ts",
-        "default": "./lib/module/index.js"
+        "types": "./lib/typescript/module/src/NativeTurboSqlite.d.ts",
+        "default": "./lib/module/NativeTurboSqlite.js"
       },
       "require": {
-        "types": "./lib/typescript/commonjs/src/index.d.ts",
-        "default": "./lib/commonjs/index.js"
+        "types": "./lib/typescript/commonjs/src/NativeTurboSqlite.d.ts",
+        "default": "./lib/commonjs/NativeTurboSqlite.js"
       }
     }
   },
@@ -33,7 +33,8 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!**/.*"
+    "!**/.*",
+    "react-native.config.js"
   ],
   "scripts": {
     "example": "yarn workspace react-native-turbo-sqlite-example",
