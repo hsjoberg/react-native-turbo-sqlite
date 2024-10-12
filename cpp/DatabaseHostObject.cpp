@@ -41,8 +41,18 @@ jsi::Value DatabaseHostObject::get(jsi::Runtime& runtime, const jsi::PropNameID&
             sqlite3_bind_text(stmt, i + 1, param.asString(runtime).utf8(runtime).c_str(), -1, SQLITE_TRANSIENT);
           } else if (param.isNumber()) {
             sqlite3_bind_double(stmt, i + 1, param.asNumber());
+          } else if (param.isBool()) {
+            throw jsi::JSError(runtime, "Unsupported parameter type boolean. Convert to number");
           } else if (param.isNull()) {
             sqlite3_bind_null(stmt, i + 1);
+          }  else if(param.isUndefined()) {
+            sqlite3_bind_null(stmt, i + 1);
+          } else if (param.isBigInt()) {
+            throw jsi::JSError(runtime, "Unsupported parameter type BigInt");
+          } else if (param.isObject()) {
+            throw jsi::JSError(runtime, "Unsupported parameter type Object");
+          } else if (param.isSymbol()) {
+            throw jsi::JSError(runtime, "Unsupported parameter type Symbol");
           } else {
             throw jsi::JSError(runtime, "Unsupported parameter type");
           }
@@ -56,18 +66,24 @@ jsi::Value DatabaseHostObject::get(jsi::Runtime& runtime, const jsi::PropNameID&
             std::string columnName = sqlite3_column_name(stmt, i);
             switch (sqlite3_column_type(stmt, i)) {
               case SQLITE_INTEGER:
-                row.setProperty(runtime, columnName.c_str(), sqlite3_column_double(stmt, i)); // TODO sqlite3_column_int64 instead?
+                row.setProperty(runtime, columnName.c_str(), static_cast<double>(sqlite3_column_int64(stmt, i)));
                 break;
               case SQLITE_FLOAT:
                 row.setProperty(runtime, columnName.c_str(), sqlite3_column_double(stmt, i));
                 break;
-              case SQLITE_TEXT:
-                row.setProperty(runtime, columnName.c_str(),
-                jsi::String::createFromUtf8(runtime, reinterpret_cast<const char*>(sqlite3_column_text(stmt, i))));
+              case SQLITE_TEXT: {
+                const unsigned char* text = sqlite3_column_text(stmt, i);
+                int length = sqlite3_column_bytes(stmt, i);
+                row.setProperty(runtime, columnName.c_str(), jsi::String::createFromUtf8(runtime, text, length));
+
+                // row.setProperty(runtime, columnName.c_str(), jsi::String::createFromUtf8(runtime, reinterpret_cast<const char*>(sqlite3_column_text(stmt, i))));
                 break;
+              }
               case SQLITE_NULL:
                 row.setProperty(runtime, columnName.c_str(), jsi::Value::null());
                 break;
+              case SQLITE_BLOB:
+                throw jsi::JSError(runtime, "Unsupported column type SQLITE_BLOB");
               default:
                 throw jsi::JSError(runtime, "Unsupported column type");
             }

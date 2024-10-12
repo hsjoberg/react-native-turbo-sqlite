@@ -36,13 +36,14 @@ const createTableResult = db.executeSql(
   "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)",
   []
 );
+console.log("Create table result:", createTableResult);
 
 // Insert some data
-const insertResult1 = db.executeSql(
+const insertResult = db.executeSql(
     "INSERT INTO users (name, age) VALUES (?, ?)",
     ["Alice", 30]
 );
-console.log("Insert result:", insertResult1);
+console.log("Insert result:", insertResult);
 
 // Select data
 const selectResult = db.executeSql("SELECT * FROM users", []);

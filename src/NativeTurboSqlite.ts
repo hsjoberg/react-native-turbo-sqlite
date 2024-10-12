@@ -15,13 +15,18 @@ export interface Database {
    * @param params An array of parameters to bind to the SQL statement.
    * @returns A SqlResult object.
    */
-  executeSql: (sql: string, params: Array<string | number | null>) => SqlResult;
+  executeSql: (sql: string, params: Params) => SqlResult;
 
   /**
    * Closes the database.
    */
   close: () => void;
 }
+
+/**
+ * An array of parameters to bind to the SQL statement.
+ */
+export type Params = Array<string | number | null | undefined | boolean>;
 
 /**
  * The result of an SQL statement.
