@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 
-import TurboSqlite from "../../src/index";
+import TurboSqlite from "../../src/NativeTurboSqlite";
 
 import { DocumentDirectoryPath } from "@dr.pogodin/react-native-fs";
 
