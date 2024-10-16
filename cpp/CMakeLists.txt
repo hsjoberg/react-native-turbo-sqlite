@@ -10,7 +10,7 @@ file(GLOB c_source_files CONFIGURE_DEPENDS *.c)
 file(GLOB cpp_source_files CONFIGURE_DEPENDS *.cpp)
 
 # Add SQLite compilation flags
-add_compile_definitions(SQLITE_ENABLE_RTREE SQLITE_ENABLE_FTS4 SQLITE_ENABLE_FTS5 SQLITE_ENABLE_JSON1 SQLITE_ENABLE_RBU SQLITE_ENABLE_SESSION)
+# add_compile_definitions(SQLITE_ENABLE_RTREE SQLITE_ENABLE_FTS4 SQLITE_ENABLE_FTS5 SQLITE_ENABLE_JSON1 SQLITE_ENABLE_RBU SQLITE_ENABLE_SESSION)
 
 # Build a static library from the source files
 add_library(TurboSqlite STATIC ${c_source_files} ${cpp_source_files})

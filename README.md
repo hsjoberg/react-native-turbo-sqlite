@@ -16,7 +16,7 @@ Pure C++ TurboModule for Sqlite
 ## Installation
 
 ```sh
-npm install react-native-turbo-sqlite
+yarn add react-native-turbo-sqlite
 ```
 
 ## Usage
