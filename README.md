@@ -9,6 +9,7 @@ Pure C++ TurboModule for Sqlite
 ✅ iOS
 ✅ macOS
 🚫 Windows (planned)
+🚫 Linux (maybe)
 🚫 Web (maybe)
 🚫 Jest mocks
 ```
@@ -20,7 +21,6 @@ yarn add react-native-turbo-sqlite
 ```
 
 ## Usage
-
 
 ```js
 import TurboSqlite from "react-native-turbo-sqlite";
