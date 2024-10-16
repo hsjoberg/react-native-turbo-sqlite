@@ -9,7 +9,6 @@ TurboSqliteModule::TurboSqliteModule(std::shared_ptr<CallInvoker> jsInvoker)
 
 std::string TurboSqliteModule::getVersionString(facebook::jsi::Runtime& runtime) {
   std::string version = sqlite3_libversion();
-  sqlite3_close(db);
   return version;
 }
 

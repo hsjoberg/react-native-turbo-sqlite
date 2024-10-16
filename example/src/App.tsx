@@ -75,7 +75,6 @@ const testSqliteTurboModule = async () => {
 export default function App(): React.FunctionComponentElement<{}> {
   return (
     <View style={styles.container}>
-      <Text>Hej</Text>
       <Text>{TurboSqlite.getVersionString()}</Text>
       <Button title="test" onPress={testSqliteTurboModule} />
     </View>
