@@ -75,6 +75,7 @@
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^29.5.5",
     "@types/react": "^18.2.44",
+    "@types/sql.js": "^1.4.9",
     "commitlint": "^17.0.2",
     "del-cli": "^5.1.0",
     "eslint": "^8.51.0",
@@ -86,6 +87,7 @@
     "react-native": "0.74.0",
     "react-native-builder-bob": "0.30.2",
     "release-it": "^15.0.0",
+    "sql.js": "^1.11.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
   },
