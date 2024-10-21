@@ -1,6 +1,6 @@
 # react-native-turbo-sqlite
 
-Pure C++ TurboModule for Sqlite
+A Pure C++ TurboModule for Sqlite.
 
 ### Platform support:
 
@@ -15,6 +15,9 @@ Pure C++ TurboModule for Sqlite
 ```
 
 ## Installation
+
+This lib requires [new architecture](https://reactnative.dev/docs/the-new-architecture/landing-page)
+enabled in your app. It will not work on the old architecture and there are no plans to support it.
 
 ```sh
 yarn add react-native-turbo-sqlite
@@ -50,6 +53,14 @@ const selectResult = db.executeSql("SELECT * FROM users", []);
 console.log("Select result:", selectResult);
 ```
 
+## Why yet another sqlite lib?
+
+Current sqlite libs for react-native such as op-sqlite and react-native-quick-sqlite do not support
+out-of-tree platforms like react-native-windows and react-native-macos. Instead of working within
+those libs I decided to write my own C++ TurboModule that has 100% code-sharing for all platforms.
+
+Any other or future out-of-tree platform should easily be supported as long as it supports new
+architecture. Let me know if you have any target that you wish should be supported.
 
 ## Contributing
 
