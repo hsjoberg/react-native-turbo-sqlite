@@ -21,9 +21,6 @@ class TurboSqliteModule : public NativeTurboSqliteCxxSpec<TurboSqliteModule> {
   std::string getVersionString(facebook::jsi::Runtime& runtime);
 
   jsi::Object openDatabase(jsi::Runtime& runtime, std::string name);
-
-  // TODO use return-type `TurboSqliteCxxSqlResult` or `TurboSqliteCxxSqlResultBridging` instead
-  jsi::Object executeSql(jsi::Runtime& runtime, std::string sql, jsi::Array params);
 };
 
 } // namespace facebook::react
