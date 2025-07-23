@@ -54,6 +54,7 @@ export interface SqlResult {
 export interface Spec extends TurboModule {
   /**
    * Opens a database.
+   * If the directory does not exist, it will be created.
    *
    * @param path The path to the database file.
    * @returns A Database object.

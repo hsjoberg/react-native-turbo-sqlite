@@ -8,7 +8,9 @@ import { DocumentDirectoryPath } from "@dr.pogodin/react-native-fs";
 const testSqliteTurboModule = async () => {
   try {
     // Open the database
-    const db = TurboSqlite.openDatabase(DocumentDirectoryPath + "/test.db");
+    const db = TurboSqlite.openDatabase(
+      DocumentDirectoryPath + "/test/test.db"
+    );
     console.log("Database opened successfully");
 
     // Create a table

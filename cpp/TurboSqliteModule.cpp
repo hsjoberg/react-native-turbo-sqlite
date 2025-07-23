@@ -2,6 +2,8 @@
 
 #include "DatabaseHostObject.h"
 
+#include <filesystem>
+
 namespace facebook::react {
 
 TurboSqliteModule::TurboSqliteModule(std::shared_ptr<CallInvoker> jsInvoker)
@@ -13,7 +15,19 @@ std::string TurboSqliteModule::getVersionString(facebook::jsi::Runtime& runtime)
 }
 
 jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string name) {
-  sqlite3* db;
+  // Create folders if they don't exist
+  std::filesystem::path p(name);
+  if (!p.has_parent_path() || p.parent_path().empty()) {
+    // The caller passed just a filename – nothing to create.
+  } else {
+    std::error_code ec;
+    std::filesystem::create_directories(p.parent_path(), ec); // ≈ `mkdir -p`
+    if (ec) {
+      throw jsi::JSError(runtime, "Failed to create directory for database: " + ec.message());
+    }
+  }
+
+  sqlite3* db = nullptr;
   int rc = sqlite3_open(name.c_str(), &db);
 
   if (rc != SQLITE_OK) {
