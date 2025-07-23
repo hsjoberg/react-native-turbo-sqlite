@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text, Button, useColorScheme } from "react-native";
 
 import TurboSqlite from "../../src/NativeTurboSqlite";
 
@@ -75,9 +75,13 @@ const testSqliteTurboModule = async () => {
 };
 
 export default function App(): React.FunctionComponentElement<{}> {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
   return (
     <View style={styles.container}>
-      <Text>{TurboSqlite.getVersionString()}</Text>
+      <Text style={{ color: isDarkMode ? "#FFFFFF" : "#000000" }}>
+        {TurboSqlite.getVersionString()}
+      </Text>
       <Button title="test" onPress={testSqliteTurboModule} />
     </View>
   );

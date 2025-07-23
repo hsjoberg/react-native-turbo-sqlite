@@ -148,7 +148,8 @@
           "trailingComma": "es5",
           "useTabs": false
         }
-      ]
+      ],
+      "react-native/no-inline-styles": "off"
     }
   },
   "eslintIgnore": [
