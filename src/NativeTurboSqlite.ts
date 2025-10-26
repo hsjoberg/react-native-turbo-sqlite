@@ -57,9 +57,10 @@ export interface Spec extends TurboModule {
    * If the directory does not exist, it will be created.
    *
    * @param path The path to the database file.
+   * @param encryptionKey Optional encryption key for SQLCipher. Only works if the library is built with SQLCipher support enabled.
    * @returns A Database object.
    */
-  openDatabase(path: string): Database;
+  openDatabase(path: string, encryptionKey?: string): Database;
 
   /**
    * Returns the version of the SQLite library in use.

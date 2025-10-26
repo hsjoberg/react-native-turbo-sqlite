@@ -14,7 +14,7 @@ std::string TurboSqliteModule::getVersionString(facebook::jsi::Runtime& runtime)
   return version;
 }
 
-jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string name) {
+jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey) {
   // Create folders if they don't exist
   std::filesystem::path p(name);
   if (!p.has_parent_path() || p.parent_path().empty()) {
@@ -34,6 +34,21 @@ jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string n
     std::string error_message = "Can't open database: " + std::string(sqlite3_errmsg(db));
     sqlite3_close(db);
     throw jsi::JSError(runtime, error_message);
+  }
+
+  // Set encryption key if provided
+  if (encryptionKey.has_value() && !encryptionKey.value().empty()) {
+#ifdef SQLITE_HAS_CODEC
+    rc = sqlite3_key(db, encryptionKey.value().c_str(), static_cast<int>(encryptionKey.value().length()));
+    if (rc != SQLITE_OK) {
+      std::string error_message = "Failed to set encryption key: " + std::string(sqlite3_errmsg(db));
+      sqlite3_close(db);
+      throw jsi::JSError(runtime, error_message);
+    }
+#else
+    sqlite3_close(db);
+    throw jsi::JSError(runtime, "Encryption key provided but library was not built with SQLCipher support. Enable SQLCipher in package.json and rebuild.");
+#endif
   }
 
   auto hostObject = std::make_shared<DatabaseHostObject>(db);

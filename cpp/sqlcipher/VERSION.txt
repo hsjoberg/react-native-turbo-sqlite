@@ -1,0 +1,26 @@
+SQLCipher Amalgamation
+=======================
+
+Version: v4.11.0 (SQLite 3.50.4 with SQLCipher extensions)
+Source: https://github.com/sqlcipher/sqlcipher
+Commit: c6e8461bfa0b7317dfd96278dd950b1eb6b21a1a
+Date: 2025-09-30
+
+Build Configuration:
+-------------------
+./configure --with-tempstore=yes \
+  CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown -I$(brew --prefix openssl)/include" \
+  LDFLAGS="-L$(brew --prefix openssl)/lib -lcrypto"
+
+make sqlite3.c
+
+Files:
+------
+- sqlite3.c : SQLCipher amalgamation source (all platforms)
+- sqlite3.h : SQLCipher header file
+
+Notes:
+------
+These files are used when SQLCipher support is enabled via package.json configuration.
+They are platform-independent and include all crypto backend implementations.
+The appropriate crypto backend is selected at compile time based on available libraries.
