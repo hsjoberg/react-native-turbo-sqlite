@@ -150,11 +150,27 @@
         }
       ],
       "react-native/no-inline-styles": "off"
-    }
+    },
+    "overrides": [
+      {
+        "files": ["example/e2e/**/*.js", "example/.detoxrc.js"],
+        "env": {
+          "jest": true
+        },
+        "globals": {
+          "device": "readonly",
+          "element": "readonly",
+          "by": "readonly",
+          "waitFor": "readonly",
+          "expect": "readonly"
+        }
+      }
+    ]
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "!example/.detoxrc.js"
   ],
   "prettier": {
     "quoteProps": "consistent",

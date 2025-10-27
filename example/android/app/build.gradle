@@ -72,6 +72,16 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
+repositories {
+    google()
+    mavenCentral()
+    // Detox Maven repository
+    // TEMPORARILY DISABLED: See comment below about Detox compatibility issue
+    // maven {
+    //     url "$rootDir/../node_modules/detox/Detox-android"
+    // }
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -128,6 +138,12 @@ dependencies {
 
     // Add OpenSSL dependency for SQLCipher
     implementation 'io.github.ronickg:openssl:3.3.3'
+
+    // Detox for E2E testing
+    // TEMPORARILY DISABLED: Detox has synchronization issues with RN 0.76 bridgeless mode on Android
+    // See: https://github.com/wix/Detox/issues/4803
+    // Use iOS for E2E tests until this is resolved
+    // androidTestImplementation('com.wix:detox:20.44.0')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

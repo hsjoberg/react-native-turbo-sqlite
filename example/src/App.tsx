@@ -114,10 +114,12 @@ export default function App(): React.FunctionComponentElement<{}> {
       <Button
         title="test sqlite"
         onPress={() => testSqliteTurboModule(false)}
+        testID="test-sqlite-button"
       />
       <Button
         title="test sqlcipher"
         onPress={() => testSqliteTurboModule(true)}
+        testID="test-sqlcipher-button"
       />
     </View>
   );
