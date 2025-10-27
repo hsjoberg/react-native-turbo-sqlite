@@ -9,11 +9,11 @@
     "start": "npx react-native start",
     "build:android": "cd android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
     "build:ios": "cd ios && xcodebuild -workspace TurboSqliteExample.xcworkspace -scheme TurboSqliteExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO",
-    "clean": "yarn clean:ios && yarn clean:android && yarn clean:node && yarn clean:cache",
+    "clean": "yarn clean:ios; yarn clean:android; yarn clean:node; yarn clean:cache",
     "clean:ios": "cd ios && rm -rf build Pods Podfile.lock && xcodebuild -workspace TurboSqliteExample.xcworkspace -scheme TurboSqliteExample clean 2>/dev/null || true",
-    "clean:android": "cd android && ./gradlew clean && rm -rf .gradle .cxx app/build build",
-    "clean:node": "rm -rf node_modules",
-    "clean:cache": "watchman watch-del-all 2>/dev/null || true && rm -rf {$TMPDIR}react-* {$TMPDIR}metro-* {$TMPDIR}haste-*",
+    "clean:android": "cd android && ./gradlew clean && rm -rf .gradle .cxx app/build build || true",
+    "clean:node": "rm -rf node_modules || true",
+    "clean:cache": "watchman watch-del-all 2>/dev/null || true && rm -rf ${TMPDIR}metro-*",
     "generate-protos": "@bufbuild/buf generate"
   },
   "dependencies": {
@@ -41,5 +41,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "react-native-turbo-sqlite": {
+    "sqlcipher": true
   }
 }

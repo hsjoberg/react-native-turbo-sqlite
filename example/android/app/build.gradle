@@ -78,6 +78,11 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.turbosqliteexample"
+
+    buildFeatures {
+        prefab true
+    }
+
     defaultConfig {
         applicationId "com.turbosqliteexample"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -120,6 +125,9 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    // Add OpenSSL dependency for SQLCipher
+    implementation 'io.github.ronickg:openssl:3.3.3'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

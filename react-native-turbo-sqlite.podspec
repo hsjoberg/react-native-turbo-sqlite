@@ -5,7 +5,7 @@ folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 
 
 # Check for SQLCipher configuration
 # Search up directory tree for package.json with react-native-turbo-sqlite config (for monorepo support)
-def find_config(dir)
+def self.find_config(dir)
   return nil if dir == '/' || dir == '.'
   package_json_path = File.join(dir, 'package.json')
   if File.exist?(package_json_path)
@@ -16,7 +16,9 @@ def find_config(dir)
   find_config(File.dirname(dir))
 end
 
-use_sqlcipher = find_config(File.dirname(__dir__)) || false
+# Check installation root first (where pod install is run from), then search upward from library location
+installation_root = Pod::Config.instance.installation_root
+use_sqlcipher = self.find_config(installation_root) || self.find_config(File.dirname(__dir__)) || false
 
 Pod::Spec.new do |s|
 
@@ -35,13 +37,15 @@ Pod::Spec.new do |s|
     s.source_files = ["cpp/**/*.{h,hpp,cpp}", "cpp/sqlcipher/*.{c,h}", "ios/OnLoad.mm"]
     s.exclude_files = ["cpp/build", "cpp/sqlite3.c", "cpp/sqlite3.h"]
 
-    # SQLCipher compiler flags
-    s.compiler_flags = '-DSQLITE_HAS_CODEC', '-DSQLITE_TEMP_STORE=2', '-DSQLITE_EXTRA_INIT=sqlcipher_extra_init', '-DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown'
+    # SQLCipher compiler flags (use CommonCrypto on iOS/macOS)
+    # Include standard SQLite recommended flags for amalgamation
+    # NDEBUG disables assert() statements (standard for production builds)
+    s.compiler_flags = '-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2 -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown -DSQLCIPHER_CRYPTO_CC -DSQLITE_THREADSAFE=1 -DNDEBUG -DSQLITE_ENABLE_API_ARMOR -DSQLITE_ENABLE_UPDATE_DELETE_LIMIT -DSQLITE_ENABLE_COLUMN_METADATA -DSQLITE_SECURE_DELETE -DSQLITE_SOUNDEX -DSQLITE_ENABLE_MEMORY_MANAGEMENT -DSQLITE_ENABLE_LOAD_EXTENSION=0'
 
     # Link Security framework for CommonCrypto on iOS/macOS
     s.frameworks = 'Security'
 
-    puts "[react-native-turbo-sqlite] Building with SQLCipher support enabled"
+    puts "[react-native-turbo-sqlite] Building with SQLCipher support enabled (CommonCrypto)"
   else
     # Standard SQLite build
     s.source_files = ["cpp/**/*.{h,hpp,cpp,c}", "ios/OnLoad.mm"]

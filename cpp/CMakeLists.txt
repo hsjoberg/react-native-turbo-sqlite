@@ -62,10 +62,16 @@ if(USE_SQLCIPHER)
 
     # Find and link OpenSSL (required for Android, not needed for iOS/macOS which use CommonCrypto)
     if(ANDROID)
+        # Add OpenSSL crypto provider flag for Android
+        target_compile_definitions(TurboSqlite PRIVATE
+            SQLCIPHER_CRYPTO_OPENSSL
+        )
         # Use Prefab to find OpenSSL package
         find_package(openssl REQUIRED CONFIG)
         target_link_libraries(TurboSqlite openssl::crypto)
-        message(STATUS "[react-native-turbo-sqlite] Linked against OpenSSL via Prefab")
+        # Link Android log library (required for SQLCipher logging)
+        target_link_libraries(TurboSqlite log)
+        message(STATUS "[react-native-turbo-sqlite] Linked against OpenSSL via Prefab and Android log")
     else()
         # iOS/macOS use CommonCrypto via Security.framework (configured in podspec)
         message(STATUS "[react-native-turbo-sqlite] Using CommonCrypto (iOS/macOS)")

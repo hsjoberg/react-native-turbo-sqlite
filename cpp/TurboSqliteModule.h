@@ -10,7 +10,11 @@
 
 #include <string>
 
+#ifdef SQLITE_HAS_CODEC
+#include "sqlcipher/sqlite3.h"
+#else
 #include "sqlite3.h"
+#endif
 
 namespace facebook::react {
 

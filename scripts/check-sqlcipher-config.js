@@ -35,8 +35,9 @@ function findConfig(dir) {
   return findConfig(path.dirname(dir));
 }
 
-// Start search from the parent directory (app directory, not node_modules)
-const startDir = path.resolve(__dirname, "../..");
+// Start search from current working directory (where the build is happening)
+// This works for both direct app builds and monorepo setups
+const startDir = process.cwd();
 const useSqlcipher = findConfig(startDir);
 
 // Output 1 for true, 0 for false (easier for CMake to consume)

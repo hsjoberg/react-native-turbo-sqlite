@@ -5,12 +5,12 @@ Version: v4.11.0 (SQLite 3.50.4 with SQLCipher extensions)
 Source: https://github.com/sqlcipher/sqlcipher
 Commit: c6e8461bfa0b7317dfd96278dd950b1eb6b21a1a
 Date: 2025-09-30
+Built: 2025-10-27
 
 Build Configuration:
 -------------------
 ./configure --with-tempstore=yes \
-  CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown -I$(brew --prefix openssl)/include" \
-  LDFLAGS="-L$(brew --prefix openssl)/lib -lcrypto"
+  CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_EXTRA_INIT=sqlcipher_extra_init -DSQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown"
 
 make sqlite3.c
 
@@ -23,4 +23,17 @@ Notes:
 ------
 These files are used when SQLCipher support is enabled via package.json configuration.
 They are platform-independent and include all crypto backend implementations.
-The appropriate crypto backend is selected at compile time based on available libraries.
+The appropriate crypto backend is selected at compile time based on platform:
+
+Platform-specific crypto flags (added by build system):
+- iOS/macOS: -DSQLCIPHER_CRYPTO_CC (CommonCrypto via Security.framework)
+- Android: -DSQLCIPHER_CRYPTO_OPENSSL (OpenSSL via Prefab)
+- Windows: -DSQLCIPHER_CRYPTO_OPENSSL (OpenSSL)
+
+Required compile-time flags (must be set when compiling):
+----------------------------------------------------------
+- SQLITE_HAS_CODEC
+- SQLITE_TEMP_STORE=2
+- SQLITE_EXTRA_INIT=sqlcipher_extra_init
+- SQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown
+- One of: SQLCIPHER_CRYPTO_CC, SQLCIPHER_CRYPTO_OPENSSL, SQLCIPHER_CRYPTO_LIBTOMCRYPT, SQLCIPHER_CRYPTO_NSS

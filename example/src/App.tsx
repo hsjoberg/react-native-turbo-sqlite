@@ -1,18 +1,18 @@
 import React from "react";
 import { StyleSheet, View, Text, Button, useColorScheme } from "react-native";
 
-import TurboSqlite from "../../src/NativeTurboSqlite";
+import TurboSqlite, { type Database } from "../../src/NativeTurboSqlite";
 
-import { DocumentDirectoryPath } from "@dr.pogodin/react-native-fs";
+import {
+  DocumentDirectoryPath,
+  unlink,
+  exists,
+} from "@dr.pogodin/react-native-fs";
 
-const testSqliteTurboModule = async () => {
+let dbIsEncrypted = false;
+
+const runCRUDs = async (db: Database) => {
   try {
-    // Open the database
-    const db = TurboSqlite.openDatabase(
-      DocumentDirectoryPath + "/test/test.db"
-    );
-    console.log("Database opened successfully");
-
     // Create a table
     const createTableResult = db.executeSql(
       "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)",
@@ -74,6 +74,35 @@ const testSqliteTurboModule = async () => {
   }
 };
 
+const testSqliteTurboModule = async (encrypted: boolean) => {
+  try {
+    const dbPath = DocumentDirectoryPath + "/test/test.db";
+    const newDBIsDifferent =
+      (encrypted && !dbIsEncrypted) || (!encrypted && dbIsEncrypted);
+
+    // Delete existing database file to start fresh
+    if (newDBIsDifferent && (await exists(dbPath))) {
+      console.log("🚨 Deleting db, as we are changing encryption");
+      await unlink(dbPath);
+      dbIsEncrypted = encrypted;
+    }
+
+    let db: Database;
+
+    if (encrypted) {
+      db = TurboSqlite.openDatabase(dbPath, "super-secret-key");
+    } else {
+      db = TurboSqlite.openDatabase(dbPath);
+    }
+
+    runCRUDs(db);
+
+    db.close();
+  } catch (error: any) {
+    console.error("SQLite error:", error.message);
+  }
+};
+
 export default function App(): React.FunctionComponentElement<{}> {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
@@ -82,7 +111,14 @@ export default function App(): React.FunctionComponentElement<{}> {
       <Text style={{ color: isDarkMode ? "#FFFFFF" : "#000000" }}>
         {TurboSqlite.getVersionString()}
       </Text>
-      <Button title="test" onPress={testSqliteTurboModule} />
+      <Button
+        title="test sqlite"
+        onPress={() => testSqliteTurboModule(false)}
+      />
+      <Button
+        title="test sqlcipher"
+        onPress={() => testSqliteTurboModule(true)}
+      />
     </View>
   );
 }
