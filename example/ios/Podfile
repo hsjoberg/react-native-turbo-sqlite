@@ -26,6 +26,8 @@ target 'TurboSqliteExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  use_native_modules!
+
   target 'TurboSqliteExampleTests' do
     inherit! :complete
     # Pods for testing

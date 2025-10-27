@@ -6,7 +6,7 @@
     "i": "yarn install && cd ios && pod install && cd ..",
     "android": "npx react-native run-android",
     "ios": "npx react-native run-ios",
-    "start": "npx metro start",
+    "start": "npx react-native start",
     "build:android": "cd android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
     "build:ios": "cd ios && xcodebuild -workspace TurboSqliteExample.xcworkspace -scheme TurboSqliteExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO",
     "clean": "yarn clean:ios && yarn clean:android && yarn clean:node && yarn clean:cache",
