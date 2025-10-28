@@ -153,7 +153,10 @@
     },
     "overrides": [
       {
-        "files": ["example/e2e/**/*.js", "example/.detoxrc.js"],
+        "files": [
+          "example/e2e/**/*.js",
+          "example/.detoxrc.js"
+        ],
         "env": {
           "jest": true
         },
