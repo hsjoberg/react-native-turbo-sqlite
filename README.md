@@ -114,6 +114,8 @@ db.executeSql("CREATE TABLE IF NOT EXISTS secrets (id INTEGER PRIMARY KEY, data 
 
 No additional setup required. Uses CommonCrypto (via Security.framework) which is built-in.
 
+**Note:** For macOS, remember to set `ENV['RCT_NEW_ARCH_ENABLED'] = '1'` in your `Podfile`.
+
 #### Android
 
 SQLCipher on Android requires OpenSSL. Add the following to your app's `android/app/build.gradle`:
