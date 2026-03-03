@@ -1,6 +1,4 @@
-jest.mock("react-native-turbo-sqlite", () => require("../src/mocks"));
-
-const TurboSqlite = require("react-native-turbo-sqlite").default;
+import TurboSqlite from "../src/mocks";
 
 describe("TurboSqlite mock", () => {
   beforeAll((done) => {
@@ -15,11 +13,18 @@ describe("TurboSqlite mock", () => {
       "CREATE TABLE test (id INTEGER PRIMARY KEY, name TEXT)",
       []
     );
-    database.executeSql("INSERT INTO test (name) VALUES (?)", ["Test Name"]);
+    const insertResult = database.executeSql(
+      "INSERT INTO test (name) VALUES (?)",
+      ["Test Name"]
+    );
     const result = database.executeSql("SELECT * FROM test", []);
 
     expect(result.rows.length).toBe(1);
-    expect(result.rows[0][1]).toBe("Test Name");
+    const firstRow = result.rows[0];
+    expect(firstRow).toBeDefined();
+    expect(firstRow?.name).toBe("Test Name");
+    expect(insertResult.rowsAffected).toBe(1);
+    expect(insertResult.insertId).toBe(1);
 
     database.close();
   });
