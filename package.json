@@ -19,6 +19,16 @@
     "./package.json": {
       "require": "./package.json",
       "import": "./package.json"
+    },
+    "./mocks": {
+      "import": {
+        "types": "./lib/typescript/module/src/mocks.d.ts",
+        "default": "./lib/module/mocks.js"
+      },
+      "require": {
+        "types": "./lib/typescript/commonjs/src/mocks.d.ts",
+        "default": "./lib/commonjs/mocks.js"
+      }
     }
   },
   "files": [
