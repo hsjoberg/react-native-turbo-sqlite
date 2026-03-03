@@ -10,11 +10,9 @@ import type {
 let sqlJs: SqlJsStatic | null = null;
 const databases = new Map<string, Uint8Array>();
 
-(() => {
-  initSqlJs().then((SQL) => {
-    sqlJs = SQL;
-  });
-})();
+export const mockReady: Promise<void> = initSqlJs().then((SQL) => {
+  sqlJs = SQL;
+});
 
 function ensureSqlJs(): SqlJsStatic {
   if (!sqlJs) {

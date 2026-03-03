@@ -1,9 +1,8 @@
-import TurboSqlite from "../src/mocks";
+import TurboSqlite, { mockReady } from "../src/mocks";
 
 describe("TurboSqlite mock", () => {
-  beforeAll((done) => {
-    // Wait for sql.js to initialize
-    setTimeout(done, 1000);
+  beforeAll(async () => {
+    await mockReady;
   });
 
   test("test", () => {
