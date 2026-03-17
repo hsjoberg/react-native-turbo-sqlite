@@ -79,14 +79,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^17.0.2",
+    "@commitlint/config-conventional": "^19.0.0",
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.73.1",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^29.5.5",
     "@types/react": "^18.2.44",
     "@types/sql.js": "^1.4.9",
-    "commitlint": "^17.0.2",
+    "commitlint": "^19.0.0",
     "del-cli": "^5.1.0",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
@@ -160,11 +160,30 @@
         }
       ],
       "react-native/no-inline-styles": "off"
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "example/e2e/**/*.js",
+          "example/.detoxrc.js"
+        ],
+        "env": {
+          "jest": true
+        },
+        "globals": {
+          "device": "readonly",
+          "element": "readonly",
+          "by": "readonly",
+          "waitFor": "readonly",
+          "expect": "readonly"
+        }
+      }
+    ]
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "!example/.detoxrc.js"
   ],
   "prettier": {
     "quoteProps": "consistent",
