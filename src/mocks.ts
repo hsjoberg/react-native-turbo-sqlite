@@ -1,4 +1,4 @@
-import type { Params, Spec } from "./NativeTurboSqlite";
+import type { Params, TurboSqliteModule } from "./NativeTurboSqlite";
 
 import initSqlJs from "sql.js";
 import type {
@@ -74,7 +74,7 @@ function mapRows(
   });
 }
 
-const TurboSqlite: Spec = {
+const TurboSqlite: TurboSqliteModule = {
   getVersionString: () => {
     const SQL = ensureSqlJs();
     const versionDb = new SQL.Database();
