@@ -1,30 +1,27 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 const projectRoot = path.resolve(__dirname, '..');
 const targetDir = path.resolve(projectRoot, 'cpp');
 
 fs.rmSync(path.resolve(targetDir, 'build'), { recursive: true, force: true });
 
-process.argv = [
-  ...process.argv.slice(0, 2),
-  '--targetPlatform',
-  'android',
-  '--path',
-  projectRoot,
-  '--outputPath',
-  targetDir,
-];
+console.log('Running @react-native-community/cli codegen...');
 
-require('react-native/scripts/generate-codegen-artifacts');
-
-// move targetdir/android/app/build to targetdir/
-fs.renameSync(
-  path.resolve(targetDir, 'android/app/build'),
-  path.resolve(targetDir, 'build'),
+execSync(
+  'npx @react-native-community/cli codegen --platform android --path . --outputPath ./cpp/',
+  {
+    cwd: projectRoot,
+    stdio: 'inherit',
+  }
 );
 
-// Remove android folder
-fs.rmSync(path.resolve(targetDir, 'android'), { recursive: true });
+const androidDir = path.resolve(targetDir, 'android');
+const sourcePath = path.resolve(androidDir, 'app/build');
+const destPath = path.resolve(targetDir, 'build');
+
+fs.cpSync(sourcePath, destPath, { recursive: true, force: true });
+fs.rmSync(androidDir, { recursive: true, force: true });
 
 console.log('Codegen specs generated successfully');

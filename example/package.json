@@ -25,28 +25,28 @@
     "@dr.pogodin/react-native-fs": "2.36.1",
     "base64-js": "^1.5.1",
     "fast-text-encoding": "^1.0.6",
-    "react": "19.0.0",
-    "react-native": "0.79.6",
+    "react": "19.1.1",
+    "react-native": "0.82.1",
     "react-native-turbo-sqlite": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "18.0.0",
-    "@react-native-community/cli-platform-android": "18.0.0",
-    "@react-native-community/cli-platform-ios": "18.0.0",
-    "@react-native/babel-preset": "0.79.6",
-    "@react-native/metro-config": "0.79.6",
-    "@react-native/typescript-config": "0.79.6",
+    "@react-native-community/cli": "20.0.0",
+    "@react-native-community/cli-platform-android": "20.0.0",
+    "@react-native-community/cli-platform-ios": "20.0.0",
+    "@react-native/babel-preset": "0.82.1",
+    "@react-native/metro-config": "0.82.1",
+    "@react-native/typescript-config": "0.82.1",
     "@types/detox": "^18.1.3",
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.1.1",
     "babel-plugin-module-resolver": "^5.0.0",
     "detox": "^20.44.0",
     "jest": "^30.2.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "react-native-turbo-sqlite": {
     "sqlcipher": true
