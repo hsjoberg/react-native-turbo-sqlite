@@ -4,6 +4,9 @@ const { exec } = require("child_process");
 const { promisify } = require("util");
 
 const execAsync = promisify(exec);
+const iosBundleId = "org.reactjs.native.example.TurboSqliteExample";
+const androidAppId = "com.turbosqliteexample";
+const databaseDirectoryName = "test";
 
 // Helper to assert boolean values (workaround for Detox overriding expect)
 function assertTrue(value, message) {
@@ -19,10 +22,9 @@ function assertFalse(value, message) {
 }
 
 /**
- * Helper function to find the app's Documents directory on iOS simulator
+ * Helper function to get the booted iOS simulator device ID
  */
-async function findIOSDocumentsPath() {
-  // Get the booted device's UDID
+async function getBootedIOSDeviceId() {
   const { stdout: bootedDevice } = await execAsync(
     `xcrun simctl list devices booted | grep -o '[A-F0-9]\\{8\\}-[A-F0-9]\\{4\\}-[A-F0-9]\\{4\\}-[A-F0-9]\\{4\\}-[A-F0-9]\\{12\\}' | head -1`
   );
@@ -32,13 +34,38 @@ async function findIOSDocumentsPath() {
     throw new Error("No booted simulator found");
   }
 
-  // Find the database file in the booted device
-  const { stdout } = await execAsync(
-    `find ~/Library/Developer/CoreSimulator/Devices/${deviceId}/data/Containers/Data/Application -name "test.db" 2>/dev/null | head -1`
-  );
-  const dbPath = stdout.trim();
+  return deviceId;
+}
 
-  if (!dbPath) {
+/**
+ * Helper function to get the app's data container on iOS simulator
+ */
+async function getIOSDataContainerPath() {
+  const deviceId = await getBootedIOSDeviceId();
+  const { stdout } = await execAsync(
+    `xcrun simctl get_app_container ${deviceId} ${iosBundleId} data`
+  );
+  const containerPath = stdout.trim();
+
+  if (!containerPath) {
+    throw new Error("App data container not found in simulator");
+  }
+
+  return containerPath;
+}
+
+/**
+ * Helper function to find the app's Documents directory on iOS simulator
+ */
+async function findIOSDocumentsPath(fileName) {
+  const dbPath = path.join(
+    await getIOSDataContainerPath(),
+    "Documents",
+    databaseDirectoryName,
+    fileName
+  );
+
+  if (!fs.existsSync(dbPath)) {
     throw new Error("Database file not found in simulator");
   }
 
@@ -48,11 +75,45 @@ async function findIOSDocumentsPath() {
 /**
  * Helper function to find the app's Documents directory on Android emulator
  */
-async function findAndroidDocumentsPath() {
+async function findAndroidDocumentsPath(fileName) {
+  const dbPath = `/data/data/${androidAppId}/files/${databaseDirectoryName}/${fileName}`;
   const { stdout } = await execAsync(
-    `adb shell "run-as com.turbosqliteexample find /data/data/com.turbosqliteexample/files -name 'test.db' 2>/dev/null | head -n 1"`
+    `adb shell "run-as ${androidAppId} sh -c \\"if [ -f '${dbPath}' ]; then printf '%s' '${dbPath}'; fi\\""`
   );
-  return stdout.trim();
+  const resolvedPath = stdout.trim();
+
+  if (!resolvedPath) {
+    throw new Error("Database file not found in app sandbox");
+  }
+
+  return resolvedPath;
+}
+
+async function deleteIOSDatabaseArtifacts(fileName) {
+  const databaseDirectory = path.join(
+    await getIOSDataContainerPath(),
+    "Documents",
+    databaseDirectoryName
+  );
+
+  for (const suffix of [fileName, `${fileName}-wal`, `${fileName}-shm`]) {
+    fs.rmSync(path.join(databaseDirectory, suffix), { force: true });
+  }
+}
+
+async function deleteAndroidDatabaseArtifacts(fileName) {
+  const databasePath = `/data/data/${androidAppId}/files/${databaseDirectoryName}/${fileName}`;
+  await execAsync(
+    `adb shell "run-as ${androidAppId} sh -c \\"rm -f '${databasePath}' '${databasePath}-wal' '${databasePath}-shm'\\""`
+  );
+}
+
+async function deleteDatabaseArtifacts(fileName) {
+  if (device.getPlatform() === "ios") {
+    await deleteIOSDatabaseArtifacts(fileName);
+  } else {
+    await deleteAndroidDatabaseArtifacts(fileName);
+  }
 }
 
 /**
@@ -87,13 +148,17 @@ function isUnencrypted(headerBuffer) {
 /**
  * Finds the database path with retry logic
  */
-async function findDatabasePathWithRetry(maxAttempts = 3, delayMs = 500) {
+async function findDatabasePathWithRetry(
+  fileName,
+  maxAttempts = 3,
+  delayMs = 500
+) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       if (device.getPlatform() === "ios") {
-        return await findIOSDocumentsPath();
+        return await findIOSDocumentsPath(fileName);
       } else {
-        return await findAndroidDocumentsPath();
+        return await findAndroidDocumentsPath(fileName);
       }
     } catch (error) {
       if (attempt === maxAttempts - 1) throw error;
@@ -104,6 +169,8 @@ async function findDatabasePathWithRetry(maxAttempts = 3, delayMs = 500) {
 
 describe("SQLite Encryption E2E Tests", () => {
   let dbPath;
+  const sqliteFileName = "test-sqlite.db";
+  const sqlcipherFileName = "test-sqlcipher.db";
 
   beforeAll(async () => {
     await device.launchApp({
@@ -114,6 +181,8 @@ describe("SQLite Encryption E2E Tests", () => {
 
   beforeEach(async () => {
     await device.reloadReactNative();
+    await deleteDatabaseArtifacts(sqliteFileName);
+    await deleteDatabaseArtifacts(sqlcipherFileName);
   });
 
   it("should create an unencrypted database when pressing test sqlite button", async () => {
@@ -123,7 +192,7 @@ describe("SQLite Encryption E2E Tests", () => {
     await element(by.id("test-sqlite-button")).tap();
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    dbPath = await findDatabasePathWithRetry();
+    dbPath = await findDatabasePathWithRetry(sqliteFileName);
     const header = await readDatabaseHeader(dbPath);
 
     assertTrue(
@@ -140,7 +209,7 @@ describe("SQLite Encryption E2E Tests", () => {
     await element(by.id("test-sqlcipher-button")).tap();
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    dbPath = await findDatabasePathWithRetry();
+    dbPath = await findDatabasePathWithRetry(sqlcipherFileName);
     const header = await readDatabaseHeader(dbPath);
 
     assertFalse(
@@ -157,19 +226,21 @@ describe("SQLite Encryption E2E Tests", () => {
     await element(by.id("test-sqlcipher-button")).tap();
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    dbPath = await findDatabasePathWithRetry();
+    dbPath = await findDatabasePathWithRetry(sqlcipherFileName);
     let header = await readDatabaseHeader(dbPath);
     assertFalse(isUnencrypted(header), "Database should be encrypted");
     console.log("✅ Database is encrypted");
 
     await element(by.id("test-sqlite-button")).tap();
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    dbPath = await findDatabasePathWithRetry(sqliteFileName);
     header = await readDatabaseHeader(dbPath);
     assertTrue(isUnencrypted(header), "Database should now be unencrypted");
     console.log("✅ Database is now unencrypted");
 
     await element(by.id("test-sqlcipher-button")).tap();
     await new Promise((resolve) => setTimeout(resolve, 1500));
+    dbPath = await findDatabasePathWithRetry(sqlcipherFileName);
     header = await readDatabaseHeader(dbPath);
     assertFalse(isUnencrypted(header), "Database should be encrypted again");
     console.log("✅ Database is encrypted again");

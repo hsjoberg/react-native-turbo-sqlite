@@ -48,7 +48,8 @@
     "!**/__fixtures__",
     "!**/__mocks__",
     "!**/.*",
-    "react-native.config.js"
+    "react-native.config.js",
+    "windows"
   ],
   "scripts": {
     "example": "yarn workspace react-native-turbo-sqlite-example",
@@ -56,8 +57,10 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "yarn generate-codegen-specs && bob build",
-    "generate-codegen-specs": "node scripts/generate-codegen-specs.cjs",
+    "codegen": "node scripts/generate-codegen-specs.cjs",
+    "codegen:standard": "node scripts/generate-codegen-specs.cjs --standard-only",
+    "codegen:windows": "node scripts/generate-codegen-specs.cjs --windows-jsi-only",
+    "prepare": "yarn codegen && bob build",
     "release": "release-it"
   },
   "keywords": [
@@ -81,6 +84,8 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^19.0.0",
     "@evilmartians/lefthook": "^1.5.0",
+    "@react-native-community/cli": "20.0.0",
+    "@react-native-windows/codegen": "0.82.0",
     "@react-native/eslint-config": "0.82.1",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^29.5.5",
@@ -96,6 +101,7 @@
     "react": "19.1.1",
     "react-native": "0.82.1",
     "react-native-builder-bob": "0.30.2",
+    "react-native-windows": "0.82.0",
     "release-it": "^15.0.0",
     "sql.js": "^1.11.0",
     "turbo": "^1.10.7",
@@ -239,7 +245,11 @@
     "type": "module-new",
     "version": "0.41.2"
   },
-  "dependencies": {
-    "@react-native-community/cli": "20.0.0"
+  "react-native-windows": {
+    "init-windows": {
+      "name": "ReactNativeTurboSqlite",
+      "namespace": "ReactNativeTurboSqlite",
+      "template": "cpp-lib"
+    }
   }
 }

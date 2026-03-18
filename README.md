@@ -8,7 +8,7 @@ A Pure C++ TurboModule for Sqlite.
 ✅ Android
 ✅ iOS
 ✅ macOS
-🚫 Windows (planned)
+✅ Windows
 🚫 Linux (maybe)
 🚫 Web (maybe)
 ✅ Jest mocks (uses sql.js)
@@ -149,6 +149,23 @@ To switch back to standard SQLite:
 
 1. Remove the configuration from `package.json`
 2. Run `pod install` (iOS/macOS) or rebuild (Android)
+
+## Windows
+
+Windows support is currently experimental.
+
+When SQLCipher is enabled, the Windows library project stages the `openssl-native`
+runtime DLLs for packaging. If your workspace layout is unusual, you can override
+Windows SQLCipher mode explicitly in `windows/ExperimentalFeatures.props`:
+
+```xml
+<PropertyGroup>
+  <UseSqlcipher>1</UseSqlcipher>
+</PropertyGroup>
+```
+
+When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting the
+setting from the nearest `package.json` above the consuming solution.
 
 ## Why yet another sqlite lib?
 

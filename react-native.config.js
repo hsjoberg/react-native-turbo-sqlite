@@ -16,6 +16,7 @@ module.exports = {
         cxxModuleHeaderName: "TurboSqliteModule",
         sourceDir: "cpp",
       },
+      windows: {},
     },
   },
 };

@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
   if use_sqlcipher
     # SQLCipher build: use sqlcipher amalgamation
     s.source_files = ["cpp/**/*.{h,hpp,cpp}", "cpp/sqlcipher/*.{c,h}", "ios/OnLoad.mm"]
-    s.exclude_files = ["cpp/build", "cpp/sqlite3.c", "cpp/sqlite3.h"]
+    s.exclude_files = ["cpp/build", "cpp/windows-jsi/**/*", "cpp/sqlite3.c", "cpp/sqlite3.h"]
 
     # SQLCipher compiler flags (use CommonCrypto on iOS/macOS)
     # Include standard SQLite recommended flags for amalgamation
@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
   else
     # Standard SQLite build
     s.source_files = ["cpp/**/*.{h,hpp,cpp,c}", "ios/OnLoad.mm"]
-    s.exclude_files = ["cpp/build", "cpp/sqlcipher"]
+    s.exclude_files = ["cpp/build", "cpp/windows-jsi/**/*", "cpp/sqlcipher"]
 
     puts "[react-native-turbo-sqlite] Building with standard SQLite (no encryption)"
   end

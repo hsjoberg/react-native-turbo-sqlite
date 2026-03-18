@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This project was created with react-native-windows 0.82.0 -->
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(SolutionDir)\ExperimentalFeatures.props" Condition="Exists('$(SolutionDir)\ExperimentalFeatures.props')" />
+  <PropertyGroup Label="Globals">
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <ProjectGuid>{B3949FDF-FC46-47DC-AF0F-8ED9D3A24B3B}</ProjectGuid>
+    <ProjectName>ReactNativeTurboSqlite</ProjectName>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ReactNativeTurboSqlite</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+    <AppxPackage>false</AppxPackage>
+  </PropertyGroup>
+  <PropertyGroup Label="ReactNativeWindowsProps">
+    <SolutionReactNativeWindowsRoot Condition="'$(SolutionDir)' != ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(SolutionDir), 'node_modules\react-native-windows\package.json'))</SolutionReactNativeWindowsRoot>
+    <RepoReactNativeWindowsRoot Condition="'$(SolutionReactNativeWindowsRoot)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'node_modules\react-native-windows\package.json'))</RepoReactNativeWindowsRoot>
+    <ReactNativeWindowsDir Condition="'$(ReactNativeWindowsDir)' == '' and '$(SolutionReactNativeWindowsRoot)' != ''">$(SolutionReactNativeWindowsRoot)\node_modules\react-native-windows\</ReactNativeWindowsDir>
+    <ReactNativeWindowsDir Condition="'$(ReactNativeWindowsDir)' == '' and '$(RepoReactNativeWindowsRoot)' != ''">$(RepoReactNativeWindowsRoot)\node_modules\react-native-windows\</ReactNativeWindowsDir>
+    <RunAutolinkCheck>false</RunAutolinkCheck>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PlatformTarget Condition="'$(Platform)' == 'Win32'">x86</PlatformTarget>
+    <PlatformTarget Condition="'$(Platform)' == 'x64'">x64</PlatformTarget>
+    <PlatformTarget Condition="'$(Platform)' == 'ARM64'">arm64</PlatformTarget>
+    <OpenSslRuntimeRid Condition="'$(PlatformTarget)' == 'x86'">win-x86</OpenSslRuntimeRid>
+    <OpenSslRuntimeRid Condition="'$(PlatformTarget)' == 'x64'">win-x64</OpenSslRuntimeRid>
+    <OpenSslRuntimeRid Condition="'$(PlatformTarget)' == 'arm64'">win-arm64</OpenSslRuntimeRid>
+    <OpenSslRuntimeCryptoName Condition="'$(PlatformTarget)' == 'x86'">libcrypto-3.dll</OpenSslRuntimeCryptoName>
+    <OpenSslRuntimeSslName Condition="'$(PlatformTarget)' == 'x86'">libssl-3.dll</OpenSslRuntimeSslName>
+    <OpenSslRuntimeCryptoName Condition="'$(PlatformTarget)' == 'x64'">libcrypto-3-x64.dll</OpenSslRuntimeCryptoName>
+    <OpenSslRuntimeSslName Condition="'$(PlatformTarget)' == 'x64'">libssl-3-x64.dll</OpenSslRuntimeSslName>
+    <OpenSslRuntimeCryptoName Condition="'$(PlatformTarget)' == 'arm64'">libcrypto-3-arm64.dll</OpenSslRuntimeCryptoName>
+    <OpenSslRuntimeSslName Condition="'$(PlatformTarget)' == 'arm64'">libssl-3-arm64.dll</OpenSslRuntimeSslName>
+    <Linkage-OpenSSL>none</Linkage-OpenSSL>
+    <UseSqlcipherIsExplicit Condition="'$(UseSqlcipher)' != ''">true</UseSqlcipherIsExplicit>
+    <UseSqlcipher Condition="'$(UseSqlcipher)' == ''">0</UseSqlcipher>
+    <SqlcipherModeName>standard SQLite</SqlcipherModeName>
+    <SqlcipherSearchRoot1 Condition="'$(SolutionDir)' != ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(SolutionDir), 'package.json'))</SqlcipherSearchRoot1>
+    <SqlcipherSearchRoot1 Condition="'$(SqlcipherSearchRoot1)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'package.json'))</SqlcipherSearchRoot1>
+    <SqlcipherSearchStart2 Condition="'$(SqlcipherSearchRoot1)' != ''">$([System.IO.Path]::GetFullPath('$(SqlcipherSearchRoot1)\..'))</SqlcipherSearchStart2>
+    <SqlcipherSearchRoot2 Condition="'$(SqlcipherSearchStart2)' != ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(SqlcipherSearchStart2), 'package.json'))</SqlcipherSearchRoot2>
+    <SqlcipherSearchStart3 Condition="'$(SqlcipherSearchRoot2)' != ''">$([System.IO.Path]::GetFullPath('$(SqlcipherSearchRoot2)\..'))</SqlcipherSearchStart3>
+    <SqlcipherSearchRoot3 Condition="'$(SqlcipherSearchStart3)' != ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(SqlcipherSearchStart3), 'package.json'))</SqlcipherSearchRoot3>
+    <SqlcipherSearchStart4 Condition="'$(SqlcipherSearchRoot3)' != ''">$([System.IO.Path]::GetFullPath('$(SqlcipherSearchRoot3)\..'))</SqlcipherSearchStart4>
+    <SqlcipherSearchRoot4 Condition="'$(SqlcipherSearchStart4)' != ''">$([MSBuild]::GetDirectoryNameOfFileAbove($(SqlcipherSearchStart4), 'package.json'))</SqlcipherSearchRoot4>
+    <SqlcipherPackageJson1 Condition="'$(SqlcipherSearchRoot1)' != '' and Exists('$(SqlcipherSearchRoot1)\package.json')">$(SqlcipherSearchRoot1)\package.json</SqlcipherPackageJson1>
+    <SqlcipherPackageJson2 Condition="'$(SqlcipherSearchRoot2)' != '' and Exists('$(SqlcipherSearchRoot2)\package.json')">$(SqlcipherSearchRoot2)\package.json</SqlcipherPackageJson2>
+    <SqlcipherPackageJson3 Condition="'$(SqlcipherSearchRoot3)' != '' and Exists('$(SqlcipherSearchRoot3)\package.json')">$(SqlcipherSearchRoot3)\package.json</SqlcipherPackageJson3>
+    <SqlcipherPackageJson4 Condition="'$(SqlcipherSearchRoot4)' != '' and Exists('$(SqlcipherSearchRoot4)\package.json')">$(SqlcipherSearchRoot4)\package.json</SqlcipherPackageJson4>
+    <SqlcipherPackageJsonText1 Condition="'$(SqlcipherPackageJson1)' != ''">$([System.IO.File]::ReadAllText('$(SqlcipherPackageJson1)'))</SqlcipherPackageJsonText1>
+    <SqlcipherPackageJsonText2 Condition="'$(SqlcipherPackageJson2)' != ''">$([System.IO.File]::ReadAllText('$(SqlcipherPackageJson2)'))</SqlcipherPackageJsonText2>
+    <SqlcipherPackageJsonText3 Condition="'$(SqlcipherPackageJson3)' != ''">$([System.IO.File]::ReadAllText('$(SqlcipherPackageJson3)'))</SqlcipherPackageJsonText3>
+    <SqlcipherPackageJsonText4 Condition="'$(SqlcipherPackageJson4)' != ''">$([System.IO.File]::ReadAllText('$(SqlcipherPackageJson4)'))</SqlcipherPackageJsonText4>
+    <SqlcipherConfigPattern>&quot;react-native-turbo-sqlite&quot;\s*:\s*\{[\s\S]*?&quot;sqlcipher&quot;\s*:\s*true</SqlcipherConfigPattern>
+    <SqlcipherHasConfig1 Condition="'$(SqlcipherPackageJsonText1)' != '' and $([System.Text.RegularExpressions.Regex]::IsMatch('$(SqlcipherPackageJsonText1)', '$(SqlcipherConfigPattern)'))">true</SqlcipherHasConfig1>
+    <SqlcipherHasConfig2 Condition="'$(SqlcipherPackageJsonText2)' != '' and $([System.Text.RegularExpressions.Regex]::IsMatch('$(SqlcipherPackageJsonText2)', '$(SqlcipherConfigPattern)'))">true</SqlcipherHasConfig2>
+    <SqlcipherHasConfig3 Condition="'$(SqlcipherPackageJsonText3)' != '' and $([System.Text.RegularExpressions.Regex]::IsMatch('$(SqlcipherPackageJsonText3)', '$(SqlcipherConfigPattern)'))">true</SqlcipherHasConfig3>
+    <SqlcipherHasConfig4 Condition="'$(SqlcipherPackageJsonText4)' != '' and $([System.Text.RegularExpressions.Regex]::IsMatch('$(SqlcipherPackageJsonText4)', '$(SqlcipherConfigPattern)'))">true</SqlcipherHasConfig4>
+    <SqlcipherConfigPackageJson Condition="'$(SqlcipherHasConfig1)' == 'true'">$(SqlcipherPackageJson1)</SqlcipherConfigPackageJson>
+    <SqlcipherConfigPackageJson Condition="'$(SqlcipherConfigPackageJson)' == '' and '$(SqlcipherHasConfig2)' == 'true'">$(SqlcipherPackageJson2)</SqlcipherConfigPackageJson>
+    <SqlcipherConfigPackageJson Condition="'$(SqlcipherConfigPackageJson)' == '' and '$(SqlcipherHasConfig3)' == 'true'">$(SqlcipherPackageJson3)</SqlcipherConfigPackageJson>
+    <SqlcipherConfigPackageJson Condition="'$(SqlcipherConfigPackageJson)' == '' and '$(SqlcipherHasConfig4)' == 'true'">$(SqlcipherPackageJson4)</SqlcipherConfigPackageJson>
+    <UseSqlcipher Condition="'$(UseSqlcipherIsExplicit)' != 'true' and '$(SqlcipherConfigPackageJson)' != ''">1</UseSqlcipher>
+    <SqlcipherModeName Condition="'$(UseSqlcipher)' == '1'">SQLCipher</SqlcipherModeName>
+    <Linkage-OpenSSL Condition="'$(UseSqlcipher)' == '1'">dynamic</Linkage-OpenSSL>
+    <CopyLocalDeploymentContent Condition="'$(UseSqlcipher)' == '1'">true</CopyLocalDeploymentContent>
+  </PropertyGroup>
+  <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.WindowsSdk.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="ReactNativeWindowsPropertySheets">
+    <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.props" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.props')" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>
+        $(MSBuildThisFileDirectory);
+        $(MSBuildThisFileDirectory)..\..\cpp;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>shell32.lib;user32.lib;windowsapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+      <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+      <ModuleDefinitionFile>ReactNativeTurboSqlite.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemGroup Condition="'$(UseSqlcipher)' == '1'">
+    <PackageReference Include="openssl-native" Version="3.5.5" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseSqlcipher)' == '1'">
+    <ReferenceCopyLocalPaths Include="$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeCryptoName)" Condition="Exists('$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeCryptoName)')" />
+    <ReferenceCopyLocalPaths Include="$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeSslName)" Condition="Exists('$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeSslName)')" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseSqlcipher)' == '1'">
+    <None Include="$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeCryptoName)" Condition="Exists('$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeCryptoName)')">
+      <DeploymentContent>true</DeploymentContent>
+      <Link>$(OpenSslRuntimeCryptoName)</Link>
+    </None>
+    <None Include="$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeSslName)" Condition="Exists('$(NuGetPackageRoot)openssl-native\3.5.5\runtimes\$(OpenSslRuntimeRid)\native\$(OpenSslRuntimeSslName)')">
+      <DeploymentContent>true</DeploymentContent>
+      <Link>$(OpenSslRuntimeSslName)</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\cpp\DatabaseHostObject.h" />
+    <ClInclude Include="..\..\cpp\TurboSqliteModule.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\cpp\windows-jsi\ReactNativeTurboSqliteJSI.h" />
+    <ClInclude Include="ReactPackageProvider.h">
+      <DependentUpon>ReactPackageProvider.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\cpp\DatabaseHostObject.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions Condition="'$(UseSqlcipher)' == '1'">SQLITE_HAS_CODEC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\TurboSqliteModule.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions Condition="'$(UseSqlcipher)' == '1'">SQLITE_HAS_CODEC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\sqlite3.c" Condition="'$(UseSqlcipher)' != '1'">
+      <CompileAs>CompileAsC</CompileAs>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\sqlcipher\sqlite3.c" Condition="'$(UseSqlcipher)' == '1'">
+      <CompileAs>CompileAsC</CompileAs>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\cpp;$(MSBuildThisFileDirectory)..\..\cpp\sqlcipher;$(NuGetPackageRoot)openssl-native\3.5.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_STDINT_H=1;SQLITE_HAS_CODEC;SQLITE_TEMP_STORE=2;SQLITE_EXTRA_INIT=sqlcipher_extra_init;SQLITE_EXTRA_SHUTDOWN=sqlcipher_extra_shutdown;SQLCIPHER_CRYPTO_OPENSSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\cpp\windows-jsi\ReactNativeTurboSqliteJSI-generated.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ReactPackageProvider.cpp">
+      <DependentUpon>ReactPackageProvider.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="ReactPackageProvider.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ReactNativeTurboSqlite.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ReactNativeWindowsTargets">
+    <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets')" />
+  </ImportGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Target Name="EnsureReactNativeWindowsTargets" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references targets in your node_modules\react-native-windows folder. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.props')" Text="$([System.String]::Format('$(ErrorText)', '$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.props'))" />
+    <Error Condition="!Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.CppLib.targets'))" />
+  </Target>
+  <Target Name="ReportSqlcipherMode" BeforeTargets="PrepareForBuild">
+    <Message Importance="High" Text="[react-native-turbo-sqlite] Windows build with $(SqlcipherModeName) (config from $(SqlcipherConfigPackageJson))" />
+  </Target>
+</Project>

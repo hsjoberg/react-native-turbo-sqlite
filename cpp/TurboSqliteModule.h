@@ -1,7 +1,10 @@
 #pragma once
 
+// Windows
+#if defined(_WIN32) && __has_include("windows-jsi/ReactNativeTurboSqliteJSI.h")
+#include "windows-jsi/ReactNativeTurboSqliteJSI.h"
 // Apple
-#if __has_include(<React-Codegen/RNTurboSqliteSpecJSI.h>)
+#elif __has_include(<React-Codegen/RNTurboSqliteSpecJSI.h>)
 #include <React-Codegen/RNTurboSqliteSpecJSI.h>
 // Android
 #elif __has_include("RNTurboSqliteSpecJSI.h")

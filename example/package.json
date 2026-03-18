@@ -16,7 +16,8 @@
     "clean:cache": "watchman watch-del-all 2>/dev/null || true && rm -rf ${TMPDIR}metro-*",
     "generate-protos": "@bufbuild/buf generate",
     "test:e2e:ios:build": "detox build --configuration ios.sim.debug",
-    "test:e2e:ios": "detox test --configuration ios.sim.debug"
+    "test:e2e:ios": "detox test --configuration ios.sim.debug",
+    "windows": "npx @react-native-community/cli run-windows"
   },
   "dependencies": {
     "@bufbuild/buf": "^1.39.0",
@@ -27,7 +28,8 @@
     "fast-text-encoding": "^1.0.6",
     "react": "19.1.1",
     "react-native": "0.82.1",
-    "react-native-turbo-sqlite": "*"
+    "react-native-turbo-sqlite": "*",
+    "react-native-windows": "0.82.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -39,6 +41,7 @@
     "@react-native/babel-preset": "0.82.1",
     "@react-native/metro-config": "0.82.1",
     "@react-native/typescript-config": "0.82.1",
+    "@rnx-kit/jest-preset": "^0.1.17",
     "@types/detox": "^18.1.3",
     "@types/react": "^19.1.1",
     "babel-plugin-module-resolver": "^5.0.0",
@@ -50,5 +53,12 @@
   },
   "react-native-turbo-sqlite": {
     "sqlcipher": true
+  },
+  "react-native-windows": {
+    "init-windows": {
+      "name": "ReactNativeTurboSqliteExample",
+      "namespace": "ReactNativeTurboSqliteExample",
+      "template": "cpp-app"
+    }
   }
 }

@@ -1,124 +1,158 @@
 import React from "react";
-import { StyleSheet, View, Text, Button, useColorScheme } from "react-native";
+import {
+  Button,
+  Platform,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
 
+import NativeWindowsAppPaths from "./NativeWindowsAppPaths";
 import TurboSqlite, { type Database } from "../../src/NativeTurboSqlite";
 
-import {
-  DocumentDirectoryPath,
-  unlink,
-  exists,
-} from "@dr.pogodin/react-native-fs";
+const getDatabaseFileName = (encrypted: boolean): string =>
+  encrypted ? "test-sqlcipher.db" : "test-sqlite.db";
 
-let dbIsEncrypted = false;
+let getDatabasePath: (encrypted: boolean) => string =
+  Platform.OS === "windows"
+    ? (encrypted: boolean) => {
+        if (!NativeWindowsAppPaths) {
+          throw new Error("WindowsAppPaths module is unavailable");
+        }
 
-const runCRUDs = async (db: Database) => {
-  try {
-    // Create a table
-    const createTableResult = db.executeSql(
-      "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)",
-      []
-    );
-    console.log("Create table result:", createTableResult);
+        const fileName = getDatabaseFileName(encrypted);
+        return `${NativeWindowsAppPaths.getDatabaseDirectory()}\\${fileName}`;
+      }
+    : (encrypted: boolean) => {
+        const fs = require("@dr.pogodin/react-native-fs");
+        return `${fs.DocumentDirectoryPath}/test/${getDatabaseFileName(encrypted)}`;
+      };
 
-    // Insert some data
-    const insertResult1 = db.executeSql(
-      "INSERT INTO users (name, age) VALUES (?, ?)",
-      ["Alice", 30]
-    );
-    console.log("Insert result 1:", insertResult1);
+const runCRUDs = (db: Database) => {
+  const createTableResult = db.executeSql(
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)",
+    []
+  );
+  console.log("Create table result:", createTableResult);
 
-    const insertResult2 = db.executeSql(
-      "INSERT INTO users (name, age) VALUES (?, ?)",
-      ["Bob", 25]
-    );
-    console.log("Insert result 2:", insertResult2);
+  const insertResult1 = db.executeSql(
+    "INSERT INTO users (name, age) VALUES (?, ?)",
+    ["Alice", 30]
+  );
+  console.log("Insert result 1:", insertResult1);
 
-    // Select data
-    const selectResult = db.executeSql("SELECT * FROM users", []);
-    console.log("Select result:", selectResult);
+  const insertResult2 = db.executeSql(
+    "INSERT INTO users (name, age) VALUES (?, ?)",
+    ["Bob", 25]
+  );
+  console.log("Insert result 2:", insertResult2);
 
-    // Display the selected data
-    console.log("Users:");
-    selectResult.rows.forEach((row) => {
-      console.log(`ID: ${row.id}, Name: ${row.name}, Age: ${row.age}`);
-    });
+  const selectResult = db.executeSql("SELECT * FROM users", []);
+  console.log("Select result:", selectResult);
 
-    // Update data
-    const updateResult = db.executeSql(
-      "UPDATE users SET age = ? WHERE name = ?",
-      [31, "Alice"]
-    );
-    console.log("Update result:", updateResult);
+  const updateResult = db.executeSql(
+    "UPDATE users SET age = ? WHERE name = ?",
+    [31, "Alice"]
+  );
+  console.log("Update result:", updateResult);
 
-    // Select data again to verify update
-    const selectAfterUpdateResult = db.executeSql("SELECT * FROM users", []);
-    console.log("Select after update result:", selectAfterUpdateResult);
+  const selectAfterUpdateResult = db.executeSql("SELECT * FROM users", []);
+  console.log("Select after update result:", selectAfterUpdateResult);
 
-    // Delete data
-    const deleteResult = db.executeSql("DELETE FROM users WHERE name = ?", [
-      "Bob",
-    ]);
-    console.log("Delete result:", deleteResult);
+  const deleteResult = db.executeSql("DELETE FROM users WHERE name = ?", [
+    "Bob",
+  ]);
+  console.log("Delete result:", deleteResult);
 
-    // Final select to show remaining data
-    const finalSelectResult = db.executeSql("SELECT * FROM users", []);
-    console.log("Final select result:", finalSelectResult);
+  const finalSelectResult = db.executeSql("SELECT * FROM users", []);
+  console.log("Final select result:", finalSelectResult);
 
-    // Delete all data
-    const deleteAllResult = db.executeSql("DELETE FROM users", []);
-    console.log("Delete all result:", deleteAllResult);
+  const deleteAllResult = db.executeSql("DELETE FROM users", []);
+  console.log("Delete all result:", deleteAllResult);
 
-    db.close();
-  } catch (error: any) {
-    console.error("SQLite error:", error.message);
-  }
+  return {
+    selectedRows: selectResult.rows.length,
+    updatedRows: selectAfterUpdateResult.rows.length,
+    remainingRows: finalSelectResult.rows.length,
+    deletedRows: deleteAllResult.rowsAffected,
+  };
 };
 
 const testSqliteTurboModule = async (encrypted: boolean) => {
+  const dbPath = getDatabasePath(encrypted);
+  let db: Database | undefined;
+
   try {
-    const dbPath = DocumentDirectoryPath + "/test/test.db";
-    const newDBIsDifferent =
-      (encrypted && !dbIsEncrypted) || (!encrypted && dbIsEncrypted);
-
-    // Delete existing database file to start fresh
-    if (newDBIsDifferent && (await exists(dbPath))) {
-      console.log("🚨 Deleting db, as we are changing encryption");
-      await unlink(dbPath);
-      dbIsEncrypted = encrypted;
-    }
-
-    let db: Database;
-
     if (encrypted) {
       db = TurboSqlite.openDatabase(dbPath, "super-secret-key");
     } else {
       db = TurboSqlite.openDatabase(dbPath);
     }
 
-    runCRUDs(db);
+    const result = runCRUDs(db);
 
-    db.close();
+    return `Success (${encrypted ? "sqlcipher" : "sqlite"}) at ${dbPath}
+Rows selected: ${result.selectedRows}
+Rows after update: ${result.updatedRows}
+Rows remaining before cleanup: ${result.remainingRows}
+Rows deleted in cleanup: ${result.deletedRows}`;
   } catch (error: any) {
     console.error("SQLite error:", error.message);
+    return `Error (${encrypted ? "sqlcipher" : "sqlite"}) at ${dbPath}
+${error instanceof Error ? error.message : String(error)}`;
+  } finally {
+    db?.close();
   }
 };
 
 export default function App(): React.FunctionComponentElement<{}> {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
+  const [version, setVersion] = React.useState("Loading TurboSqlite...");
+  const [startupError, setStartupError] = React.useState<string | null>(null);
+  const [status, setStatus] = React.useState(
+    "Press a button to test TurboSqlite."
+  );
+  const textColor = isDarkMode ? "#FFFFFF" : "#000000";
+  const backgroundColor = isDarkMode ? "#111111" : "#f5f5f5";
+
+  React.useEffect(() => {
+    try {
+      setVersion(TurboSqlite.getVersionString());
+    } catch (error) {
+      setStartupError(
+        error instanceof Error ? error.message : "Failed to load TurboSqlite"
+      );
+    }
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text style={{ color: isDarkMode ? "#FFFFFF" : "#000000" }}>
-        {TurboSqlite.getVersionString()}
+    <View style={[styles.container, { backgroundColor }]}>
+      <Text style={[styles.title, { color: textColor }]}>TurboSqlite</Text>
+      <Text style={[styles.version, { color: textColor }]}>{version}</Text>
+      <Text style={[styles.status, { color: textColor }]} selectable>
+        {status}
       </Text>
+      {startupError ? (
+        <Text style={styles.error} selectable>
+          {startupError}
+        </Text>
+      ) : null}
       <Button
         title="test sqlite"
-        onPress={() => testSqliteTurboModule(false)}
+        onPress={() => {
+          setStatus("Running sqlite test...");
+          testSqliteTurboModule(false).then(setStatus);
+        }}
         testID="test-sqlite-button"
       />
       <Button
         title="test sqlcipher"
-        onPress={() => testSqliteTurboModule(true)}
+        onPress={() => {
+          setStatus("Running sqlcipher test...");
+          testSqliteTurboModule(true).then(setStatus);
+        }}
         testID="test-sqlcipher-button"
       />
     </View>
@@ -130,5 +164,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    gap: 12,
+    padding: 24,
   },
+  title: { fontSize: 24, fontWeight: "600" },
+  version: {},
+  status: { textAlign: "center" },
+  error: { color: "#b00020", textAlign: "center" },
 });
