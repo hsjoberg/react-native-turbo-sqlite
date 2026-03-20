@@ -2,6 +2,10 @@
 
 #include "pch.h"
 
+#if __has_include("codegen/NativeExampleAppPathsSpec.g.h")
+#include "codegen/NativeExampleAppPathsSpec.g.h"
+#endif
+
 #include <NativeModules.h>
 #include <winrt/Windows.Storage.h>
 
@@ -39,8 +43,12 @@ inline std::string pathToUtf8(const std::filesystem::path &path) noexcept {
   return utf8Path;
 }
 
-REACT_MODULE(WindowsAppPaths)
-struct WindowsAppPaths {
+REACT_TURBO_MODULE(ExampleAppPaths)
+struct ExampleAppPaths {
+#if __has_include("codegen/NativeExampleAppPathsSpec.g.h")
+  using ModuleSpec = ReactNativeTurboSqliteExampleCodegen::ExampleAppPathsSpec;
+#endif
+
   REACT_SYNC_METHOD(getDatabaseDirectory)
   std::string getDatabaseDirectory() noexcept {
     try {

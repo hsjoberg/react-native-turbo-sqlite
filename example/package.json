@@ -17,13 +17,13 @@
     "generate-protos": "@bufbuild/buf generate",
     "test:e2e:ios:build": "detox build --configuration ios.sim.debug",
     "test:e2e:ios": "detox test --configuration ios.sim.debug",
+    "codegen:windows": "npx @react-native-community/cli codegen-windows",
     "windows": "npx @react-native-community/cli run-windows"
   },
   "dependencies": {
     "@bufbuild/buf": "^1.39.0",
     "@bufbuild/protobuf": "^2.0.0",
     "@bufbuild/protoc-gen-es": "^2.0.0",
-    "@dr.pogodin/react-native-fs": "2.36.1",
     "base64-js": "^1.5.1",
     "fast-text-encoding": "^1.0.6",
     "react": "19.1.1",
@@ -53,6 +53,19 @@
   },
   "react-native-turbo-sqlite": {
     "sqlcipher": true
+  },
+  "codegenConfig": {
+    "name": "TurboSqliteExampleSpec",
+    "type": "modules",
+    "jsSrcsDir": "src/turbomodules",
+    "android": {
+      "javaPackageName": "com.turbosqliteexample.specs"
+    },
+    "windows": {
+      "namespace": "ReactNativeTurboSqliteExampleCodegen",
+      "outputDirectory": "windows/ReactNativeTurboSqliteExample/codegen",
+      "separateDataTypes": true
+    }
   },
   "react-native-windows": {
     "init-windows": {

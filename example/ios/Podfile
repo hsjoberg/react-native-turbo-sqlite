@@ -36,18 +36,5 @@ target 'TurboSqliteExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-
-    # Add UniformTypeIdentifiers framework to app target
-    # this seems to be for @dr.pogodin/react-native-fs
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        xcconfig_path = config.base_configuration_reference.real_path
-        xcconfig = File.read(xcconfig_path)
-        if target.name == 'Pods-TurboSqliteExample'
-          new_xcconfig = xcconfig + "\nOTHER_LDFLAGS = $(inherited) -framework UniformTypeIdentifiers\n"
-          File.open(xcconfig_path, "w") { |file| file << new_xcconfig }
-        end
-      end
-    end
   end
 end

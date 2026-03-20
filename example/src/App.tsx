@@ -1,33 +1,14 @@
 import React from "react";
-import {
-  Button,
-  Platform,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Button, StyleSheet, Text, useColorScheme, View } from "react-native";
 
-import NativeWindowsAppPaths from "./NativeWindowsAppPaths";
+import NativeExampleAppPaths from "./turbomodules/NativeExampleAppPaths";
 import TurboSqlite, { type Database } from "../../src/NativeTurboSqlite";
 
-const getDatabaseFileName = (encrypted: boolean): string =>
-  encrypted ? "test-sqlcipher.db" : "test-sqlite.db";
-
-let getDatabasePath: (encrypted: boolean) => string =
-  Platform.OS === "windows"
-    ? (encrypted: boolean) => {
-        if (!NativeWindowsAppPaths) {
-          throw new Error("WindowsAppPaths module is unavailable");
-        }
-
-        const fileName = getDatabaseFileName(encrypted);
-        return `${NativeWindowsAppPaths.getDatabaseDirectory()}\\${fileName}`;
-      }
-    : (encrypted: boolean) => {
-        const fs = require("@dr.pogodin/react-native-fs");
-        return `${fs.DocumentDirectoryPath}/test/${getDatabaseFileName(encrypted)}`;
-      };
+const getDatabasePath = (encrypted: boolean): string => {
+  const directory = NativeExampleAppPaths.getDatabaseDirectory();
+  const fileName = encrypted ? "test-sqlcipher.db" : "test-sqlite.db";
+  return `${directory}/${fileName}`;
+};
 
 const runCRUDs = (db: Database) => {
   const createTableResult = db.executeSql(
