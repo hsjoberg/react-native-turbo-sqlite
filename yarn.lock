@@ -2507,19 +2507,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dr.pogodin/react-native-fs@npm:2.36.1":
-  version: 2.36.1
-  resolution: "@dr.pogodin/react-native-fs@npm:2.36.1"
-  dependencies:
-    buffer: ^6.0.3
-    http-status-codes: ^2.3.0
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 1cc74fc10ca207fcaaac693eb876101e156507356e87bf7b51354fb7b9105cf87b17d1e4e380af9459304b60d7e385a2e1e0f6bc1a6cf2af2116ceca26854658
-  languageName: node
-  linkType: hard
-
 "@emnapi/core@npm:^1.4.3":
   version: 1.6.0
   resolution: "@emnapi/core@npm:1.6.0"
@@ -9226,13 +9213,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-status-codes@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "http-status-codes@npm:2.3.0"
-  checksum: dae3b99e0155441b6df28e8265ff27c56a45f82c6092f736414233e9ccf063d5ea93c1e1279e8b499c4642e2538b37995c76b1640ed3f615d0e2883d3a1dcfd5
-  languageName: node
-  linkType: hard
-
 "http2-wrapper@npm:^2.1.10":
   version: 2.2.1
   resolution: "http2-wrapper@npm:2.2.1"
@@ -14022,7 +14002,6 @@ __metadata:
     "@bufbuild/buf": ^1.39.0
     "@bufbuild/protobuf": ^2.0.0
     "@bufbuild/protoc-gen-es": ^2.0.0
-    "@dr.pogodin/react-native-fs": 2.36.1
     "@react-native-community/cli": 20.0.0
     "@react-native-community/cli-platform-android": 20.0.0
     "@react-native-community/cli-platform-ios": 20.0.0

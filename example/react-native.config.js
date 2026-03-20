@@ -9,11 +9,6 @@ module.exports = {
     [pak.name]: {
       root: path.join(__dirname, ".."),
     },
-    "@dr.pogodin/react-native-fs": {
-      platforms: {
-        windows: null,
-      },
-    },
   },
   commands: [
     ...ios.commands,
