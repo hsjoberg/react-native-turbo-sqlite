@@ -97,15 +97,15 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "jest": "^29.7.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.8.1",
     "react": "19.1.1",
     "react-native": "0.82.1",
-    "react-native-builder-bob": "0.30.2",
+    "react-native-builder-bob": "^0.40.18",
     "react-native-windows": "0.82.0",
-    "release-it": "^15.0.0",
-    "sql.js": "^1.11.0",
+    "release-it": "^19.2.4",
+    "sql.js": "^1.14.1",
     "turbo": "^1.10.7",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "resolutions": {
     "@types/react": "^19.1.1"
@@ -223,8 +223,7 @@
       [
         "typescript",
         {
-          "project": "tsconfig.build.json",
-          "esm": true
+          "project": "tsconfig.build.json"
         }
       ]
     ]
