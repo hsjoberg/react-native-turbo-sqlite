@@ -164,8 +164,8 @@ Windows SQLCipher mode explicitly in `windows/ExperimentalFeatures.props`:
 </PropertyGroup>
 ```
 
-When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting the
-setting from the nearest `package.json` above the consuming solution.
+When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting the setting by scanning
+package.json files above the consuming solution and using the first one that declares the react-native- turbo-sqlite SQLCipher setting.
 
 ## Why yet another sqlite lib?
 

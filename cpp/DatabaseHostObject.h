@@ -2,6 +2,7 @@
 
 // #include <ReactCommon/jsi/jsi/jsi.h>
 
+#include <memory>
 #include <jsi/jsi.h>
 
 #ifdef SQLITE_HAS_CODEC
@@ -21,7 +22,8 @@ public:
   std::vector<jsi::PropNameID> getPropertyNames(jsi::Runtime& rt) override;
 
 private:
-  sqlite3* db;
+  struct DatabaseState;
+  std::shared_ptr<DatabaseState> state;
 };
 
 }
