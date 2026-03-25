@@ -9,10 +9,13 @@ A Pure C++ TurboModule for Sqlite.
 ✅ iOS
 ✅ macOS
 ✅ Windows
+✅ Web
 🚫 Linux (maybe)
-🚫 Web (maybe)
 ✅ Jest mocks (uses sql.js)
 ```
+
+> [!NOTE]
+> Web support is async-only and requires additional setup. See [Web](#web) section below
 
 ## Installation
 
@@ -51,7 +54,49 @@ console.log("Insert result:", insertResult);
 // Select data
 const selectResult = db.executeSql("SELECT * FROM users", []);
 console.log("Select result:", selectResult);
+
+// You can also run a query async
+const asyncSelectResult = await db.executeSqlAsync(
+  "SELECT * FROM users",
+  []
+);
+console.log("Async select result:", asyncSelectResult);
 ```
+
+## Native Async APIs
+
+On native platforms, `openDatabaseAsync()`, `executeSqlAsync()`, and `closeAsync()`
+run on a background native worker thread instead of the JS thread.
+
+- The async APIs use the same parameter and result shapes as the synchronous APIs.
+- `executeSqlAsync()` still follows the native single-statement behavior of
+  `executeSql()`.
+- Async calls on the same database connection are serialized.
+
+## Web
+
+Web support is async-only and uses a vendored copy of the official
+[`@sqlite.org/sqlite-wasm`](https://github.com/sqlite/sqlite-wasm) worker API
+with [OPFS](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) persistence.
+
+- Use `openDatabaseAsync()`, `executeSqlAsync()`, `closeAsync()`, and
+  the other async APIs on web.
+- The synchronous APIs intentionally throw on web.
+- SQLCipher is not supported on web.
+- OPFS is required for the real web backend. If OPFS is unavailable,
+  `openDatabaseAsync()` throws.
+- Web currently executes the full SQL string passed to `executeSqlAsync()`.
+  Native currently executes only the first prepared statement, so avoid
+  multi-statement SQL strings if you need identical behavior across platforms.
+- For non-persistent tests and mocks, use `react-native-turbo-sqlite/mocks`
+  (which uses `sql.js`).
+
+You must also serve the required headers for the sqlite-wasm worker/OPFS setup:
+
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
+
+The Vite example under `example/` is configured this way already.
 
 ## Encryption Support (SQLCipher)
 
@@ -164,8 +209,10 @@ Windows SQLCipher mode explicitly in `windows/ExperimentalFeatures.props`:
 </PropertyGroup>
 ```
 
-When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting the setting by scanning
-package.json files above the consuming solution and using the first one that declares the react-native- turbo-sqlite SQLCipher setting.
+When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting
+the setting by scanning `package.json` files above the consuming solution and
+using the first one that declares the `react-native-turbo-sqlite` SQLCipher
+setting.
 
 ## Why yet another sqlite lib?
 

@@ -7,6 +7,12 @@
     "android": "npx react-native run-android",
     "ios": "npx react-native run-ios",
     "start": "npx react-native start",
+    "web:metro": "npx react-native start --config metro.web.config.js --port 8081",
+    "web": "vite",
+    "web:webpack": "webpack serve --config webpack.config.js --mode development --port 8082",
+    "web:webpack:build": "webpack --config webpack.config.js --mode production",
+    "web:build": "vite build",
+    "web:preview": "vite preview",
     "build:android": "cd android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
     "build:ios": "cd ios && xcodebuild -workspace TurboSqliteExample.xcworkspace -scheme TurboSqliteExample -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO",
     "clean": "yarn clean:ios; yarn clean:android; yarn clean:node; yarn clean:cache",
@@ -27,8 +33,10 @@
     "base64-js": "^1.5.1",
     "fast-text-encoding": "^1.0.6",
     "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-native": "0.82.1",
     "react-native-turbo-sqlite": "*",
+    "react-native-web": "^0.21.2",
     "react-native-windows": "0.82.0"
   },
   "devDependencies": {
@@ -44,9 +52,18 @@
     "@rnx-kit/jest-preset": "^0.1.17",
     "@types/detox": "^18.1.3",
     "@types/react": "^19.1.1",
+    "@types/react-dom": "19.1.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "babel-loader": "^10.0.0",
     "babel-plugin-module-resolver": "^5.0.3",
     "detox": "^20.44.0",
-    "jest": "^30.3.0"
+    "html-webpack-plugin": "^5.6.4",
+    "jest": "^30.3.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.2",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   },
   "engines": {
     "node": ">=20"

@@ -49,7 +49,11 @@ function walk(dir) {
 function getWindowsSpecFiles() {
   return walk(codegenSrcDir)
     .filter((filePath) => /\.(ts|tsx)$/.test(filePath))
-    .filter((filePath) => path.basename(filePath).startsWith("Native"))
+    .filter((filePath) => {
+      const parsed = path.parse(filePath);
+
+      return parsed.name.startsWith("Native") && !parsed.name.includes(".");
+    })
     .map((filePath) => path.relative(projectRoot, filePath));
 }
 

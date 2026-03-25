@@ -2,8 +2,13 @@
 
 #include "DatabaseHostObject.h"
 
+#include <react/bridging/Error.h>
+#include <react/bridging/Promise.h>
+
 #include <filesystem>
+#include <memory>
 #include <stdexcept>
+#include <thread>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -12,6 +17,13 @@
 namespace facebook::react {
 
 namespace {
+
+using SqliteHandle = std::unique_ptr<sqlite3, decltype(&sqlite3_close)>;
+
+struct OpenDatabaseResult {
+  SqliteHandle db;
+  std::shared_ptr<CallInvoker> jsInvoker;
+};
 
 std::filesystem::path pathFromUtf8(const std::string& utf8Path) {
 #ifdef _WIN32
@@ -53,32 +65,20 @@ std::filesystem::path pathFromUtf8(const std::string& utf8Path) {
 #endif
 }
 
-} // namespace
-
-TurboSqliteModule::TurboSqliteModule(std::shared_ptr<CallInvoker> jsInvoker)
-  : NativeTurboSqliteCxxSpec(std::move(jsInvoker)) {}
-
-std::string TurboSqliteModule::getVersionString(facebook::jsi::Runtime& runtime) {
-  std::string version = sqlite3_libversion();
-  return version;
-}
-
-jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey) {
+SqliteHandle openDatabaseHandle(const std::string& name, const std::optional<std::string>& encryptionKey) {
   // Create folders if they don't exist
-  std::filesystem::path p;
+  std::filesystem::path path;
   try {
-    p = pathFromUtf8(name);
+    path = pathFromUtf8(name);
   } catch (const std::exception& error) {
-    throw jsi::JSError(runtime, "Invalid database path: " + std::string(error.what()));
+    throw std::runtime_error("Invalid database path: " + std::string(error.what()));
   }
 
-  if (!p.has_parent_path() || p.parent_path().empty()) {
-    // The caller passed just a filename – nothing to create.
-  } else {
+  if (path.has_parent_path() && !path.parent_path().empty()) {
     std::error_code ec;
-    std::filesystem::create_directories(p.parent_path(), ec); // ≈ `mkdir -p`
+    std::filesystem::create_directories(path.parent_path(), ec);
     if (ec) {
-      throw jsi::JSError(runtime, "Failed to create directory for database: " + ec.message());
+      throw std::runtime_error("Failed to create directory for database: " + ec.message());
     }
   }
 
@@ -86,28 +86,72 @@ jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string n
   int rc = sqlite3_open(name.c_str(), &db);
 
   if (rc != SQLITE_OK) {
-    std::string error_message = "Can't open database: " + std::string(sqlite3_errmsg(db));
+    std::string errorMessage = "Can't open database: " + std::string(sqlite3_errmsg(db));
     sqlite3_close(db);
-    throw jsi::JSError(runtime, error_message);
+    throw std::runtime_error(errorMessage);
   }
 
   // Set encryption key if provided
-  if (encryptionKey.has_value() && !encryptionKey.value().empty()) {
+  if (encryptionKey.has_value() && !encryptionKey->empty()) {
 #ifdef SQLITE_HAS_CODEC
-    rc = sqlite3_key(db, encryptionKey.value().c_str(), static_cast<int>(encryptionKey.value().length()));
+    rc = sqlite3_key(db, encryptionKey->c_str(), static_cast<int>(encryptionKey->length()));
     if (rc != SQLITE_OK) {
-      std::string error_message = "Failed to set encryption key: " + std::string(sqlite3_errmsg(db));
+      std::string errorMessage = "Failed to set encryption key: " + std::string(sqlite3_errmsg(db));
       sqlite3_close(db);
-      throw jsi::JSError(runtime, error_message);
+      throw std::runtime_error(errorMessage);
     }
 #else
     sqlite3_close(db);
-    throw jsi::JSError(runtime, "Encryption key provided but library was not built with SQLCipher support. Enable SQLCipher in package.json and rebuild.");
+    throw std::runtime_error("Encryption key provided but library was not built with SQLCipher support. Enable SQLCipher in package.json and rebuild.");
 #endif
   }
 
-  auto hostObject = std::make_shared<DatabaseHostObject>(db);
-  return jsi::Object::createFromHostObject(runtime, hostObject);
+  return SqliteHandle(db, &sqlite3_close);
+}
+
+} // namespace
+
+template <>
+struct Bridging<OpenDatabaseResult> {
+  static jsi::Object toJs(jsi::Runtime& rt, OpenDatabaseResult result) {
+    auto hostObject = std::make_shared<DatabaseHostObject>(result.db.release(), result.jsInvoker);
+    return jsi::Object::createFromHostObject(rt, hostObject);
+  }
+};
+
+TurboSqliteModule::TurboSqliteModule(std::shared_ptr<CallInvoker> jsInvoker)
+  : NativeTurboSqliteCxxSpec(std::move(jsInvoker)) {}
+
+std::string TurboSqliteModule::getVersionString(facebook::jsi::Runtime&) {
+  return sqlite3_libversion();
+}
+
+jsi::Object TurboSqliteModule::openDatabase(jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey) {
+  try {
+    auto db = openDatabaseHandle(name, encryptionKey);
+    auto hostObject = std::make_shared<DatabaseHostObject>(db.release(), jsInvoker_);
+    return jsi::Object::createFromHostObject(runtime, hostObject);
+  } catch (const std::exception& error) {
+    throw jsi::JSError(runtime, error.what());
+  }
+}
+
+jsi::Value TurboSqliteModule::openDatabaseAsync(facebook::jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey) {
+  AsyncPromise<OpenDatabaseResult> promise(runtime, jsInvoker_);
+  auto promiseValue = promise.get(runtime);
+
+  std::thread(
+    [jsInvoker = jsInvoker_, promise = std::move(promise), name = std::move(name), encryptionKey = std::move(encryptionKey)]() mutable {
+      try {
+        auto db = openDatabaseHandle(name, encryptionKey);
+        promise.resolve(OpenDatabaseResult{std::move(db), jsInvoker});
+      } catch (const std::exception& error) {
+        promise.reject(Error(error.what()));
+      }
+    }
+  ).detach();
+
+  return promiseValue;
 }
 
 } // namespace facebook::react

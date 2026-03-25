@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TurboSqlite Example</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      const isMetroWeb = window.location.port === "8081";
+      const script = document.createElement("script");
+
+      if (isMetroWeb) {
+        script.src =
+          "/index.bundle?platform=web&dev=true&minify=false&modulesOnly=false&runModule=true";
+      } else {
+        script.type = "module";
+        script.src = "/src/main.web.tsx";
+      }
+
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
