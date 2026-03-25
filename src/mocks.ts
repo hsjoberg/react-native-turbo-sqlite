@@ -1,4 +1,4 @@
-import type { Params, TurboSqliteModule } from "./NativeTurboSqlite";
+import type { Database, Params, TurboSqliteModule } from "./TurboSqliteTypes";
 
 import initSqlJs from "sql.js";
 import type {
@@ -95,7 +95,7 @@ const TurboSqlite: TurboSqliteModule = {
       : new SQL.Database();
     let isClosed = false;
 
-    return {
+    const database: Database = {
       executeSql: (sqlStatement: string, params: Params) => {
         if (isClosed) {
           throw new Error("Database is closed");
@@ -119,7 +119,18 @@ const TurboSqlite: TurboSqliteModule = {
           isClosed = true;
         }
       },
+      executeSqlAsync: async (sqlStatement: string, params: Params) => {
+        return database.executeSql(sqlStatement, params);
+      },
+      closeAsync: async () => {
+        database.close();
+      },
     };
+
+    return database;
+  },
+  openDatabaseAsync: async (path: string) => {
+    return TurboSqlite.openDatabase(path);
   },
 };
 
