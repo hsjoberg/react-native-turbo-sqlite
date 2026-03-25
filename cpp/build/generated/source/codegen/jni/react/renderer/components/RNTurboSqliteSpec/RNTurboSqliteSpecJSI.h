@@ -21,6 +21,7 @@ protected:
 
 public:
   virtual jsi::Object openDatabase(jsi::Runtime &rt, jsi::String path, std::optional<jsi::String> encryptionKey) = 0;
+  virtual jsi::Value openDatabaseAsync(jsi::Runtime &rt, jsi::String path, std::optional<jsi::String> encryptionKey) = 0;
   virtual jsi::String getVersionString(jsi::Runtime &rt) = 0;
 
 };
@@ -59,6 +60,14 @@ private:
 
       return bridging::callFromJs<jsi::Object>(
           rt, &T::openDatabase, jsInvoker_, instance_, std::move(path), std::move(encryptionKey));
+    }
+    jsi::Value openDatabaseAsync(jsi::Runtime &rt, jsi::String path, std::optional<jsi::String> encryptionKey) override {
+      static_assert(
+          bridging::getParameterCount(&T::openDatabaseAsync) == 3,
+          "Expected openDatabaseAsync(...) to have 3 parameters");
+
+      return bridging::callFromJs<jsi::Value>(
+          rt, &T::openDatabaseAsync, jsInvoker_, instance_, std::move(path), std::move(encryptionKey));
     }
     jsi::String getVersionString(jsi::Runtime &rt) override {
       static_assert(

@@ -2,11 +2,14 @@
   "name": "react-native-turbo-sqlite",
   "version": "0.5.0",
   "description": "Pure C++ TurboModule for sqlite3",
-  "source": "./src/index.tsx",
+  "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "exports": {
     ".": {
+      "browser": {
+        "default": "./lib/module/index.web.js"
+      },
       "import": {
         "types": "./lib/typescript/module/src/index.d.ts",
         "default": "./lib/module/index.js"
@@ -53,9 +56,10 @@
   ],
   "scripts": {
     "example": "yarn workspace react-native-turbo-sqlite-example",
+    "example:web": "yarn workspace react-native-turbo-sqlite-example-web",
     "test": "jest",
     "typecheck": "tsc",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint babel.config.js react-native.config.js src tests scripts example/src example-web/src example-web/vite.config.ts",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "codegen": "node scripts/generate-codegen-specs.cjs",
     "codegen:standard": "node scripts/generate-codegen-specs.cjs --standard-only",
@@ -112,11 +116,18 @@
     "@types/react": "^19.1.1"
   },
   "peerDependencies": {
+    "@sqlite.org/sqlite-wasm": "3.51.2-build8",
     "react": "*",
     "react-native": "*"
   },
+  "peerDependenciesMeta": {
+    "@sqlite.org/sqlite-wasm": {
+      "optional": true
+    }
+  },
   "workspaces": [
-    "example"
+    "example",
+    "example-web"
   ],
   "packageManager": "yarn@3.6.1",
   "engines": {

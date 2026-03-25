@@ -9,10 +9,13 @@ A Pure C++ TurboModule for Sqlite.
 ✅ iOS
 ✅ macOS
 ✅ Windows
+✅ Web
 🚫 Linux (maybe)
-🚫 Web (maybe)
 ✅ Jest mocks (uses sql.js)
 ```
+
+> [!NOTE]
+> Web support is async-only and requires additional setup. See [Web](#web) section below
 
 ## Installation
 
@@ -21,6 +24,13 @@ enabled in your app. It will not work on the old architecture and there are no p
 
 ```sh
 yarn add react-native-turbo-sqlite
+```
+
+If you want to use the web backend as well, install the official SQLite wasm
+package too:
+
+```sh
+yarn add @sqlite.org/sqlite-wasm
 ```
 
 ## Usage
@@ -51,7 +61,36 @@ console.log("Insert result:", insertResult);
 // Select data
 const selectResult = db.executeSql("SELECT * FROM users", []);
 console.log("Select result:", selectResult);
+
+// You can also run a query async
+const asyncSelectResult = await db.executeSqlAsync(
+  "SELECT * FROM users",
+  []
+);
+console.log("Async select result:", asyncSelectResult);
 ```
+
+## Web
+
+Web support is async-only and uses the official
+[`@sqlite.org/sqlite-wasm`](https://github.com/sqlite/sqlite-wasm) worker API
+with [OPFS](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) persistence.
+
+- Use `openDatabaseAsync()`, `executeSqlAsync()`, `closeAsync()`, and
+  the other async APIs on web.
+- The synchronous APIs intentionally throw on web.
+- SQLCipher is not supported on web.
+- OPFS is required for the real web backend. If OPFS is unavailable,
+  `openDatabaseAsync()` throws.
+- For non-persistent tests and mocks, keep using `react-native-turbo-sqlite/mocks`
+  (which uses `sql.js`).
+
+You must also serve the required headers for the sqlite-wasm worker/OPFS setup:
+
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
+
+The Vite example under `example-web/` is configured this way already.
 
 ## Encryption Support (SQLCipher)
 
@@ -164,8 +203,10 @@ Windows SQLCipher mode explicitly in `windows/ExperimentalFeatures.props`:
 </PropertyGroup>
 ```
 
-When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting the setting by scanning
-package.json files above the consuming solution and using the first one that declares the react-native- turbo-sqlite SQLCipher setting.
+When `UseSqlcipher` is not set explicitly, Windows falls back to auto-detecting
+the setting by scanning `package.json` files above the consuming solution and
+using the first one that declares the `react-native-turbo-sqlite` SQLCipher
+setting.
 
 ## Why yet another sqlite lib?
 

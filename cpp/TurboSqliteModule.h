@@ -28,6 +28,7 @@ class TurboSqliteModule : public NativeTurboSqliteCxxSpec<TurboSqliteModule> {
   std::string getVersionString(facebook::jsi::Runtime& runtime);
 
   jsi::Object openDatabase(jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey);
+  jsi::Value openDatabaseAsync(facebook::jsi::Runtime& runtime, std::string name, std::optional<std::string> encryptionKey);
 };
 
 } // namespace facebook::react

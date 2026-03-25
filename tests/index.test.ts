@@ -27,4 +27,25 @@ describe("TurboSqlite mock", () => {
 
     database.close();
   });
+
+  test("async mock API", async () => {
+    const database = await TurboSqlite.openDatabaseAsync("");
+
+    await database.executeSqlAsync(
+      "CREATE TABLE test_async (id INTEGER PRIMARY KEY, name TEXT)",
+      []
+    );
+    await database.executeSqlAsync("INSERT INTO test_async (name) VALUES (?)", [
+      "Async Name",
+    ]);
+    const result = await database.executeSqlAsync(
+      "SELECT * FROM test_async",
+      []
+    );
+
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0]?.name).toBe("Async Name");
+
+    await database.closeAsync();
+  });
 });
