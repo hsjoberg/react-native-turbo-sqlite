@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <jsi/jsi.h>
+#include <ReactCommon/CallInvoker.h>
 
 #ifdef SQLITE_HAS_CODEC
 #include "sqlcipher/sqlite3.h"
@@ -15,7 +16,7 @@ namespace facebook::react {
 
 class DatabaseHostObject : public jsi::HostObject {
 public:
-  DatabaseHostObject(sqlite3* db);
+  DatabaseHostObject(sqlite3* db, std::shared_ptr<CallInvoker> jsInvoker);
   ~DatabaseHostObject();
 
   jsi::Value get(jsi::Runtime&, const jsi::PropNameID& name) override;

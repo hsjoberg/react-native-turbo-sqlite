@@ -18,6 +18,13 @@ static jsi::Value __hostFunction_NativeTurboSqliteCxxSpecJSI_openDatabase(jsi::R
     count <= 1 || args[1].isUndefined() ? std::nullopt : std::make_optional(args[1].asString(rt))
   );
 }
+static jsi::Value __hostFunction_NativeTurboSqliteCxxSpecJSI_openDatabaseAsync(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
+  return static_cast<NativeTurboSqliteCxxSpecJSI *>(&turboModule)->openDatabaseAsync(
+    rt,
+    (count > 0 || (throw jsi::JSError(rt, "Expected argument in position 0 to be passed"), false), args[0].asString(rt)),
+    count <= 1 || args[1].isUndefined() ? std::nullopt : std::make_optional(args[1].asString(rt))
+  );
+}
 static jsi::Value __hostFunction_NativeTurboSqliteCxxSpecJSI_getVersionString(jsi::Runtime &rt, TurboModule &turboModule, const jsi::Value* args, size_t count) {
   return static_cast<NativeTurboSqliteCxxSpecJSI *>(&turboModule)->getVersionString(
     rt
@@ -27,6 +34,7 @@ static jsi::Value __hostFunction_NativeTurboSqliteCxxSpecJSI_getVersionString(js
 NativeTurboSqliteCxxSpecJSI::NativeTurboSqliteCxxSpecJSI(std::shared_ptr<CallInvoker> jsInvoker)
   : TurboModule("TurboSqliteCxx", jsInvoker) {
   methodMap_["openDatabase"] = MethodMetadata {2, __hostFunction_NativeTurboSqliteCxxSpecJSI_openDatabase};
+  methodMap_["openDatabaseAsync"] = MethodMetadata {2, __hostFunction_NativeTurboSqliteCxxSpecJSI_openDatabaseAsync};
   methodMap_["getVersionString"] = MethodMetadata {0, __hostFunction_NativeTurboSqliteCxxSpecJSI_getVersionString};
 }
 

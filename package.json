@@ -2,11 +2,25 @@
   "name": "react-native-turbo-sqlite",
   "version": "0.5.0",
   "description": "Pure C++ TurboModule for sqlite3",
-  "source": "./src/index.tsx",
+  "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
+  "react-native": "./lib/module/index",
+  "browser": "./lib/module/index.browser.js",
   "exports": {
     ".": {
+      "browser": {
+        "import": {
+          "types": "./lib/typescript/module/src/index.browser.d.ts",
+          "default": "./lib/module/index.browser.js"
+        },
+        "require": {
+          "types": "./lib/typescript/commonjs/src/index.browser.d.ts",
+          "default": "./lib/commonjs/index.browser.js"
+        },
+        "default": "./lib/module/index.browser.js"
+      },
+      "react-native": "./lib/module/index.js",
       "import": {
         "types": "./lib/typescript/module/src/index.d.ts",
         "default": "./lib/module/index.js"
@@ -28,6 +42,19 @@
       "require": {
         "types": "./lib/typescript/commonjs/src/mocks.d.ts",
         "default": "./lib/commonjs/mocks.js"
+      }
+    },
+    "./browser": {
+      "browser": {
+        "default": "./lib/module/index.browser.js"
+      },
+      "import": {
+        "types": "./lib/typescript/module/src/index.browser.d.ts",
+        "default": "./lib/module/index.browser.js"
+      },
+      "require": {
+        "types": "./lib/typescript/commonjs/src/index.browser.d.ts",
+        "default": "./lib/commonjs/index.browser.js"
       }
     }
   },
@@ -53,10 +80,12 @@
   ],
   "scripts": {
     "example": "yarn workspace react-native-turbo-sqlite-example",
+    "example:web": "yarn workspace react-native-turbo-sqlite-example web",
     "test": "jest",
     "typecheck": "tsc",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint babel.config.js react-native.config.js src tests scripts example/src example/vite.config.ts",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "vendor:sqlite-wasm": "node scripts/vendor-sqlite-wasm.cjs",
     "codegen": "node scripts/generate-codegen-specs.cjs",
     "codegen:standard": "node scripts/generate-codegen-specs.cjs --standard-only",
     "codegen:windows": "node scripts/generate-codegen-specs.cjs --windows-jsi-only",
@@ -88,6 +117,7 @@
     "@react-native-windows/codegen": "0.82.0",
     "@react-native/eslint-config": "0.82.1",
     "@release-it/conventional-changelog": "^10.0.5",
+    "@sqlite.org/sqlite-wasm": "3.51.2-build8",
     "@types/jest": "^29.5.5",
     "@types/react": "^19.1.1",
     "@types/sql.js": "^1.4.9",
@@ -196,6 +226,7 @@
   "eslintIgnore": [
     "node_modules/",
     "lib/",
+    "src/vendor/",
     "!example/.detoxrc.js"
   ],
   "prettier": {
