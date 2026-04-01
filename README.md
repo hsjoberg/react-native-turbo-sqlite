@@ -9,7 +9,7 @@ A Pure C++ TurboModule for Sqlite.
 ✅ iOS
 ✅ macOS
 ✅ Windows
-✅ Web
+✅ Web (uses @sqlite.org/sqlite-wasm)
 ✅ Jest mocks (uses sql.js)
 ```
 
