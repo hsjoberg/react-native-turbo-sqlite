@@ -1,0 +1,188 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Semver increment to publish
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: Run the full release flow without publishing
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Validate release candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn lint
+          yarn typecheck
+          yarn test --maxWorkers=2
+          yarn prepare
+          git diff --exit-code
+
+  build-android:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build Android example
+        env:
+          JAVA_OPTS: "-XX:MaxHeapSize=6g"
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m"
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn codegen
+          yarn workspace react-native-turbo-sqlite-example build:android
+
+  build-ios:
+    needs: validate
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Install CocoaPods
+        shell: bash
+        env:
+          NO_FLIPPER: 1
+        run: |
+          set -euo pipefail
+          cd example/ios
+          pod install
+
+      - name: Build iOS example
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn codegen
+          yarn workspace react-native-turbo-sqlite-example build:ios
+
+  release:
+    needs:
+      - build-android
+      - build-ios
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure release runs from master
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_NAME}" != "master" ]]; then
+            echo "This release workflow must run from master." >&2
+            exit 1
+          fi
+
+      - name: Setup Node.js for npm trusted publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Install release dependencies
+        run: yarn install --immutable
+
+      - name: Run release-it
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          args=(
+            "${{ inputs.release_type }}"
+            "--ci"
+          )
+
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            args+=("--dry-run")
+          fi
+
+          yarn release "${args[@]}"

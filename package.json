@@ -154,6 +154,9 @@
   },
   "jest": {
     "preset": "react-native",
+    "testPathIgnorePatterns": [
+      "<rootDir>/example/e2e/"
+    ],
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"

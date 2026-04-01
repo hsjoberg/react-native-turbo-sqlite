@@ -15572,17 +15572,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-turbo-sqlite@npm:*":
-  version: 0.5.0
-  resolution: "react-native-turbo-sqlite@npm:0.5.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 57e2b7724516a6cf3986a0099ab90178ee5f6ff9a8496c5d7dab3759b991f2323af672c092a69daf69e90ac6f866f649c8c33fb9cd8f6554549d37b25160aac6
-  languageName: node
-  linkType: hard
-
-"react-native-turbo-sqlite@workspace:.":
+"react-native-turbo-sqlite@*, react-native-turbo-sqlite@workspace:.":
   version: 0.0.0-use.local
   resolution: "react-native-turbo-sqlite@workspace:."
   dependencies:
