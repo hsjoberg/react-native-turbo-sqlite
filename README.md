@@ -10,7 +10,6 @@ A Pure C++ TurboModule for Sqlite.
 ✅ macOS
 ✅ Windows
 ✅ Web
-🚫 Linux (maybe)
 ✅ Jest mocks (uses sql.js)
 ```
 
