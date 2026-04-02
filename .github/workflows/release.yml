@@ -34,10 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: yarn
@@ -63,10 +63,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: yarn
@@ -102,10 +102,10 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: yarn
@@ -132,14 +132,49 @@ jobs:
           yarn codegen
           yarn workspace react-native-turbo-sqlite-example build:ios
 
+  build-windows:
+    needs: validate
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Generate codegen
+        shell: powershell
+        run: |
+          yarn codegen
+          yarn codegen:windows
+          yarn workspace react-native-turbo-sqlite-example codegen:windows
+
+      - name: Build Windows example
+        shell: powershell
+        run: |
+          msbuild example\windows\ReactNativeTurboSqliteExample\ReactNativeTurboSqliteExample.vcxproj /restore /p:Configuration=Debug /p:Platform=x64
+
   release:
     needs:
       - build-android
       - build-ios
+      - build-windows
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -152,7 +187,7 @@ jobs:
           fi
 
       - name: Setup Node.js for npm trusted publishing
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: https://registry.npmjs.org
