@@ -100,14 +100,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+http://github.com/hsjoberg/react-native-turbo-sqlite.git"
+    "url": "git+https://github.com/smolcars/react-native-turbo-sqlite.git"
   },
   "author": "Hampus Sjöberg <hampus.sjoberg@protonmail.com> (http://blixtwallet.com)",
   "license": "MIT",
   "bugs": {
-    "url": "http://github.com/hsjoberg/react-native-turbo-sqlite/issues"
+    "url": "https://github.com/smolcars/react-native-turbo-sqlite/issues"
   },
-  "homepage": "http://github.com/hsjoberg/react-native-turbo-sqlite#readme",
+  "homepage": "https://github.com/smolcars/react-native-turbo-sqlite#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
