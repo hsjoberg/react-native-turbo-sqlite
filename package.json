@@ -90,6 +90,7 @@
     "codegen:standard": "node scripts/generate-codegen-specs.cjs --standard-only",
     "codegen:windows": "node scripts/generate-codegen-specs.cjs --windows-jsi-only",
     "prepare": "yarn codegen && bob build",
+    "prepack": "yarn prepare",
     "release": "release-it"
   },
   "keywords": [
@@ -169,11 +170,13 @@
   },
   "release-it": {
     "git": {
+      "requireBranch": "master",
       "commitMessage": "chore: release ${version}",
       "tagName": "v${version}"
     },
     "npm": {
-      "publish": true
+      "publish": true,
+      "skipChecks": true
     },
     "github": {
       "release": true
