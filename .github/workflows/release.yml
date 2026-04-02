@@ -163,8 +163,9 @@ jobs:
 
       - name: Build Windows example
         shell: powershell
+        working-directory: example
         run: |
-          msbuild example\windows\ReactNativeTurboSqliteExample\ReactNativeTurboSqliteExample.vcxproj /restore /p:Configuration=Debug /p:Platform=x64
+          npx @react-native-community/cli run-windows --no-deploy --no-launch
 
   release:
     needs:
