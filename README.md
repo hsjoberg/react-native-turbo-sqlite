@@ -215,9 +215,9 @@ setting.
 
 ## Why yet another sqlite lib?
 
-Current sqlite libs for react-native such as op-sqlite and react-native-quick-sqlite do not support
-out-of-tree platforms like react-native-windows and react-native-macos. Instead of working within
-those libs I decided to write my own C++ TurboModule that has 100% code-sharing for all platforms.
+The main point of this library is architectural consistency across platforms.
+It uses React Native Codegen together with a shared C++ TurboModule so the native
+implementation can be shared across Android, iOS, macOS, and Windows.
 
 Any other or future out-of-tree platform should easily be supported as long as it supports new
 architecture. Let me know if you have any target that you wish should be supported.
