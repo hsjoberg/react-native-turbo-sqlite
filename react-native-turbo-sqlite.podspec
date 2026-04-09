@@ -5,7 +5,7 @@ folly_compiler_flags = '-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 
 
 # Check for SQLCipher configuration
 # Search up directory tree for package.json with react-native-turbo-sqlite config (for monorepo support)
-def self.find_config(dir)
+def self.turbo_sqlite_find_config(dir)
   return nil if dir == '/' || dir == '.'
   package_json_path = File.join(dir, 'package.json')
   if File.exist?(package_json_path)
@@ -13,12 +13,12 @@ def self.find_config(dir)
     config = app_package.dig('react-native-turbo-sqlite', 'sqlcipher')
     return config unless config.nil?
   end
-  find_config(File.dirname(dir))
+  turbo_sqlite_find_config(File.dirname(dir))
 end
 
 # Check installation root first (where pod install is run from), then search upward from library location
 installation_root = Pod::Config.instance.installation_root
-use_sqlcipher = self.find_config(installation_root) || self.find_config(File.dirname(__dir__)) || false
+use_sqlcipher = self.turbo_sqlite_find_config(installation_root) || self.turbo_sqlite_find_config(File.dirname(__dir__)) || false
 
 Pod::Spec.new do |s|
 
