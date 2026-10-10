@@ -41,6 +41,26 @@ To run the example app on iOS:
 yarn example ios
 ```
 
+To run the example app on macOS (macOS 14 or newer):
+
+```sh
+pod install --project-directory=example/macos
+yarn example start:macos
+# In another terminal:
+yarn example macos
+```
+
+The macOS project follows the SwiftUI template shipped with `react-native-macos@0.83.0`
+and enables the New Architecture. Metro selects `react-native-macos` and its matching
+React 19.2.0 alias (`react-macos`) for macOS bundles. Other platforms keep their
+existing React and React Native versions.
+
+To build the macOS Release app with its JavaScript bundle, as CI does:
+
+```sh
+yarn example build:macos
+```
+
 To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
 
 ```sh

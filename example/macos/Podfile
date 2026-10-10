@@ -1,0 +1,28 @@
+ENV['REACT_NATIVE_PLATFORM'] = 'macos'
+ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+
+# Resolve with Node so this also works when Yarn hoists workspace packages.
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve("react-native-macos/scripts/react_native_pods.rb", {paths: [process.argv[1]]})',
+  __dir__]).strip
+
+prepare_react_native_project!
+
+target 'TurboSqliteExample-macOS' do
+  platform :macos, min_macos_version_supported
+  # Always discover the example, including when --project-directory is used
+  # from the repository root.
+  config = use_native_modules!(['node', '-e',
+    "process.chdir(#{File.expand_path('..', __dir__).to_json});" \
+    "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"])
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    react_native_post_install(installer, config[:reactNativePath])
+  end
+end
