@@ -149,7 +149,8 @@ jobs:
         run: yarn install --immutable
 
       - name: Install CocoaPods
-        run: pod install --project-directory=example/macos --deployment
+        # Podspec checksums vary with Ruby's JSON formatting; pod install keeps locked versions.
+        run: pod install --project-directory=example/macos
 
       - name: Build macOS example
         run: yarn workspace react-native-turbo-sqlite-example build:macos
